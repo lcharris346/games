@@ -1163,13 +1163,13 @@ def main(args):
         ctr_array = [0]*args.iterations
         max_win_array = [0]*args.iterations
         succ_cnt = 0
-        threshold = args.credit * 0.2
+        threshold = args.credit * .2
         stack_type_hist = copy.deepcopy(STACK_TYPE_HIST)
         
         for ii in range(args.iterations):
 
             vp = Vp(args.activity, args.addition_type, args.num_sets, args.credit, args.denom, args.automate, args.verbose, stack_type_hist)
-            max_ctr = 120 # Divide by 12 to get ave min
+            max_ctr = 180 # Divide by 12 to get ave min
             credit_array = [0]*max_ctr
             net_50_loss = False
             fourth_credit = False
@@ -1185,15 +1185,15 @@ def main(args):
                 succ = False
 
                 
-                if vp.win >= threshold:
+                if vp.win >= threshold or vp.credit >= args.credit + threshold:
 
                     succ_cnt += 1
                     succ = True
                     break
 
-            if succ == False and vp.credit >= args.credit:
+            #if succ == False and vp.credit >= args.credit:
 
-                succ_cnt += 1
+            #    succ_cnt += 1
 
             final_rtp_array[ii] = vp.total_rtp / (ctr)
             final_credit_array[ii] = vp.credit

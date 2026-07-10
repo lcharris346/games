@@ -7,6 +7,8 @@ import os
 import sys
 
 ################################ Constants, Supporting Classes  #################################
+# OS
+CLEAR = 'cls' if os.name == 'nt' else 'clear'
 # Output
 OUTPUT = open("sample.txt").readlines()
 
@@ -26,14 +28,32 @@ STR_DIAG = ("e", "ne","n","nw","w","sw","s","se")
 EL =  ("ene", "nne", "nnw", "wnw", "ese", "sse","ssw", "wsw")
 
 # State
-STATE  = {"my_targets": set(), "my_supports": set(), "my_paths": set(),  "targeting_me": set(), "supporting_me": set(),  "paths_near_me": set()}
+STATE  = { 
+          "my_targets_shared_w_friends": set(),
+          "my_paths_shared_w_friends": set(),
+          "my_targets_only": set(),
+          "my_paths_only": set(),
+          "my_paths_shared_w_enemy": set(), 
+          "my_targets_supported_by_enemy": set(), 
+
+          "my_supports_targeted_by_enemy": set(),    
+          "my_supports_shared_w_friends": set(), 
+          "my_supports_only": set(),
+
+          "my_targets": set(),
+          "my_supports": set(),
+          "my_paths": set(), 
+
+          "targeting_me": set(), 
+          "supporting_me": set()
+}
 
 # Pieces
 PIECE_TYPES = ("king", "queen", "bishop", "knight", "rook", "pawn")
 
 PIECE_NAMES = ("bR", "bN", "bB", "bK", "bQ", "bB", "bN", "bR",
-               "bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp",
-               "wp", "wp", "wp", "wp", "wp", "wp", "wp", "bp", 
+               "bP", 
+               "wP",
                "wR", "wN", "wB", "wK", "wQ", "wB", "wN", "wR")
 
 # Squares, Positions, Coordinates
@@ -65,7 +85,7 @@ def print_labels():
     print("   a1 b1 c1 d1 e1 f1 g1 h1 ")
 
 #Pieces
-
+COLOR_EMPTY = "."
 class Piece(object):
 
     def __init__(self, name, _type, value, target_dir, path_dir, path_range):
@@ -86,6 +106,7 @@ class Piece(object):
         self.in_check = False
         self.check_mate = False
         self.moved = False
+        self.pos_valid_moves = []
 
     def update_pos(self, pos):
         if pos != self.pos:
@@ -132,14 +153,30 @@ class Piece(object):
                     self.state["my_targets"].add(test_pos)
                     board[test_pos].piece.state["targeting_me"].add(self.pos)
                     
-        #if self.type != "none":
-		  #     print("State", self.pos, self.name, self.state)
-			
+    def update_state2(self, w_pos, b_pos, e_pos, board):
 
-   
+        friendly_pos = w_pos if self.color == "w" else b_pos
+        enemy_pos    = b_pos if self.color == "w" else w_pos
+
+        for ep in enemy_pos:
+
+            [self.state["my_paths_shared_w_enemy"].add(x) for x in self.state["my_paths"]          if x in board[ep].piece.state["my_paths"] ]
+            [self.state["my_targets_supported_by_enemy"].add(x) for x in self.state["my_targets"]  if x in board[ep].piece.state["my_supports"]]
+            [self.state["my_supports_targeted_by_enemy"].add(x) for x in self.state["my_supports"] if x in board[ep].piece.state["my_targets"]]
+
+        for fp in friendly_pos:
+            [self.state["my_paths_shared_w_friends"].add(x) for x in self.state["my_paths"]       if x in board[fp].piece.state["my_paths"] and x not in  self.state["my_paths_shared_w_enemy"]]
+            [self.state["my_targets_shared_w_friends"].add(x) for x in self.state["my_targets"]   if x in board[fp].piece.state["my_targets"] and x not in  self.state["my_targets_supported_by_enemy"]]
+            [self.state["my_supports_shared_w_friends"].add(x) for x in self.state["my_supports"] if x in board[fp].piece.state["my_supports"] and x not in self.state["my_supports_targeted_by_enemy"]]
+
+        self.state["my_targets_only"] = [x for x in self.state["my_paths"] if x not in list(self.state["my_targets_supported_by_enemy"]) + list(self.state["my_targets_shared_w_friends"])]
+        self.state["my_supports_only"] = [x for x in self.state["my_supports"] if x not in list(self.state["my_supports_targeted_by_enemy"]) + list(self.state["my_supports_shared_w_friends"])]
+        self.state["my_paths_only"] = [x for x in self.state["my_paths"] if x not in list(self.state["my_paths_shared_w_enemy"]) + list(self.state["my_paths_shared_w_friends"])]	
+
 class King(Piece):
     def __init__(self, name,):
         super().__init__(name, "king",   1e6, STR_DIAG, STR_DIAG, 1)
+        self.is_king = True
 
 class Queen(Piece):
     def __init__(self, name):
@@ -187,7 +224,7 @@ class Square(object):
 
 
 # Board
-BOARD = { x: Square(x, NoPiece("n ")) for x in POSITIONS}
+BOARD = { x: Square(x, NoPiece(COLOR_EMPTY + " ")) for x in POSITIONS}
 
 BOARD["a1"] = Square("a1", Rook("wR"))
 BOARD["b1"] = Square("b1", Knight("wN"))
@@ -198,24 +235,24 @@ BOARD["f1"] = Square("f1", Bishop("wB"))
 BOARD["g1"] = Square("g1", Knight("wN"))
 BOARD["h1"] = Square("h1", Rook("wR"))
 
-BOARD["a2"] = Square("a2", WhitePawn("wp"))
-BOARD["b2"] = Square("b2", WhitePawn("wp"))
-BOARD["c2"] = Square("c2", WhitePawn("wp"))
-BOARD["d2"] = Square("d2", WhitePawn("wp"))
-BOARD["e2"] = Square("e2", WhitePawn("wp"))
-BOARD["f2"] = Square("f2", WhitePawn("wp"))
-BOARD["g2"] = Square("g2", WhitePawn("wp"))
-BOARD["h2"] = Square("h2", WhitePawn("wp"))
+BOARD["a2"] = Square("a2", WhitePawn("wP"))
+BOARD["b2"] = Square("b2", WhitePawn("wP"))
+BOARD["c2"] = Square("c2", WhitePawn("wP"))
+BOARD["d2"] = Square("d2", WhitePawn("wP"))
+BOARD["e2"] = Square("e2", WhitePawn("wP"))
+BOARD["f2"] = Square("f2", WhitePawn("wP"))
+BOARD["g2"] = Square("g2", WhitePawn("wP"))
+BOARD["h2"] = Square("h2", WhitePawn("wP"))
 
 
-BOARD["a7"] = Square("a7", BlackPawn("bp"))
-BOARD["b7"] = Square("b7", BlackPawn("bp"))
-BOARD["c7"] = Square("c7", BlackPawn("bp"))
-BOARD["d7"] = Square("d7", BlackPawn("bp"))
-BOARD["e7"] = Square("e7", BlackPawn("bp"))
-BOARD["f7"] = Square("f7", BlackPawn("bp"))
-BOARD["g7"] = Square("g7", BlackPawn("bp"))
-BOARD["h7"] = Square("h7", BlackPawn("bp"))
+BOARD["a7"] = Square("a7", BlackPawn("bP"))
+BOARD["b7"] = Square("b7", BlackPawn("bP"))
+BOARD["c7"] = Square("c7", BlackPawn("bP"))
+BOARD["d7"] = Square("d7", BlackPawn("bP"))
+BOARD["e7"] = Square("e7", BlackPawn("bP"))
+BOARD["f7"] = Square("f7", BlackPawn("bP"))
+BOARD["g7"] = Square("g7", BlackPawn("bP"))
+BOARD["h7"] = Square("h7", BlackPawn("bP"))
 
 BOARD["a8"] = Square("a8", Rook("bR"))
 BOARD["b8"] = Square("b8", Knight("bN"))
@@ -286,9 +323,11 @@ def print_board(board):
 ######################################## Main Class  ########################################
 
 class CH(object):
-    def __init__(self, automate, verbose):
+    def __init__(self, algorithm, automate, verbose, debug):
+        self.algorithm = algorithm
         self.automate = automate
         self.verbose = verbose
+        self.debug = debug
 
         self.board = copy.deepcopy(BOARD)
         self.prison = copy.deepcopy(PRISON_PIECES)
@@ -300,99 +339,235 @@ class CH(object):
         self.w_b_pos = []
         self.running = True
         self.ctr = 0
+        self.pos_mobile_pieces = []
 
     def update_turn(self):
+        
         self.turn = "b" if self.turn == "w" else "w"
         print("Ctr", self.ctr, "Turn:", self.turn)
 
     def update_teams(self):
         self.w_pos = [x for x in BOARD_KEYS if self.board[x].piece.color == "w" ]
         self.b_pos = [x for x in BOARD_KEYS if self.board[x].piece.color == "b" ]
-        self.e_pos = [x for x in BOARD_KEYS if self.board[x].piece.color == "n" ]
+        self.e_pos = [x for x in BOARD_KEYS if self.board[x].piece.color == COLOR_EMPTY ]
 
     def update_pieces(self):
         self.pieces = { self.board[x].piece: x for x in BOARD_KEYS }
 
     def update_piece_states(self):
         for pos in BOARD_KEYS:
-            piece = self.board[pos].piece
-            piece.update_state(self.w_pos, self.b_pos, self.e_pos, self.board)
-
-    def evaluate_check(self):
-        ctr = 0
+            self.board[pos].piece.update_state(self.w_pos, self.b_pos, self.e_pos, self.board)
+            
+    def update_piece_states2(self):
         for pos in BOARD_KEYS:
+            self.board[pos].piece.update_state2(self.w_pos, self.b_pos, self.e_pos, self.board)
+
+    def update_valid_moves(self):
+        piece_king = None
+        pos_mobile_pieces_check = []
+        self.pos_mobile_pieces = []
+
+        for pos in BOARD_KEYS:
+            
             piece = self.board[pos].piece
-            if piece.is_king:
-                if len(piece.state["targeting_me"]) > 0:
-                    piece.is_check = True
-                    if len(piece.state["my_paths"]) == 0:
-                        piece.check_mate = True
-                        self.running = False
-                        print("CheckMate!")
-                        return
+
+            if piece.color == self.turn:
+                 
+                if piece.is_king == True:
+
+                    piece_king = self.board[pos].piece
+
+                    piece_king.pos_valid_moves = list(piece_king.state["my_paths_only"]) + list(piece_king.state["my_paths_shared_w_friends"]) + \
+                                                 list(piece_king.state["my_targets_only"]) + list(piece_king.state["my_targets_shared_w_friends"])
+                    
+                
+                    if len(piece_king.pos_valid_moves) > 0:
+                            
+                        self.pos_mobile_pieces.append(pos)
+
+
+                    if len(piece_king.state["targeting_me"]) > 0:
+
+                        piece_king.in_check = True
+                        print("INFO. *******Check!*******")
+
+                        if len(piece_king.pos_valid_moves) > 0:
+
+                            pos_mobile_pieces_check.append(pos)
+
+                    else:
+
+                        piece_king.in_check = False
+
                 else:
-                    piece.is_check = False
 
-                ctr += 1
-                if ctr >= 2:
-                    return
+                    piece.pos_valid_moves = list(piece.state["my_targets"]) + list(piece.state["my_paths"])
+
+                    if len(piece.pos_valid_moves) > 0:
+                            
+                            self.pos_mobile_pieces.append(pos)
+
+        # Find Enemy Targeting King Targeted by Friends
+        if piece_king and piece_king.in_check == True:
+            
+            for fp in self.pos_mobile_pieces:
+
+                if self.board[fp].piece.is_king == False:
+
+                    self.board[fp].piece.pos_valid_moves = []
+
+                    for ftp in self.board[fp].piece.state["my_targets"]:
+
+                        if ftp in piece_king.state["targeting_me"]:
+
+                            pos_mobile_pieces_check.append(fp)
+                            self.board[fp].piece.pos_valid_moves.append(ftp)
+
+            self.pos_mobile_pieces = pos_mobile_pieces_check
+
         
+            #Determine Check Mate
+            if len(pos_mobile_pieces_check) == 0:
+                piece_king.check_mate = True
+                print("INFO. *****************Check Mate!*****************")
+
+    def algorithm0(self):
+
+        user_input = input("Enter curr_pos,new_pos:")
+
+        if user_input == "a1":
+
+            user_input = self.algorithm1()
+
+        elif user_input in ("a2",""):
+
+            user_input = self.algorithm2()
+
+        return user_input
+
     def algorithm1(self):
-		  
-        mobile_piece_pos = {}
-        
-        pos_of_enemy_targets = []
-        pos_of_enemy_paths = []
-        for x in BOARD_KEYS:
-           if self.board[x].piece.color != self.turn:
-              pos_of_enemy_targets.append(self.board[x].piece.state["my_targets"])
-              pos_of_enemy_paths.append(self.board[x].piece.state["my_paths"])
-
-        
-		  
-        for x in BOARD_KEYS:
-           if self.board[x].piece.color == self.turn:
-              if   len(self.board[x].piece.state["my_targets"]) > 0:
-                   mobile_piece_pos[x] = self.board[x].piece.state["my_targets"]
-             
-                   
-              elif len(self.board[x].piece.state["my_paths"])   > 0:
-                 paths = []
-                 for pos in self.board[x].piece.state["my_paths"]:
-                    if pos not in pos_of_enemy_paths:
-                       paths.append(pos)
-                       break
-                 if len(paths) == 0:
-                    paths = self.board[x].piece.state["my_paths"][0]
-                 mobile_piece_pos[x] = paths
-
-           if x in mobile_piece_pos.keys() and x in pos_of_enemy_targets:
-               break
-              
-		  
-        if len(mobile_piece_pos) == 0:
+        curr_new_pos = "q,q"
+        if len(self.pos_mobile_pieces) == 0:
             self.running = False
-            return "q,q"
+            return curr_new_pos
 		      
-        curr_pos = random.choice(list(mobile_piece_pos.keys()))
-        new_pos =  random.choice(list(mobile_piece_pos[curr_pos]))
+        curr_pos = random.choice(self.pos_mobile_pieces)
+        new_pos =  random.choice(self.board[curr_pos].piece.pos_valid_moves)
+
+        print("INFO. Selection", curr_new_pos)
 		  
-        return curr_pos +","+ new_pos
+        curr_new_pos = curr_pos +","+ new_pos
+        return curr_new_pos
+    
+    def algorithm2(self):
+
+        # Should I move
+        #  No  if im only support for friend
+        #  Yes If targeted more than support, yes. 
+            # my_targets_shared_w_friends, 
+            # my_paths_shared_w_friends, 
+            # my_targets_only, 
+            # my_paths_only, 
+            # my_paths_shared_w_enemy, 
+            # my_targets_supported_by_enemy
+        curr_new_pos = "q,q"
+
+        if len(self.pos_mobile_pieces) == 0:
+            self.running = False
+            return curr_new_pos
+        
+        #Remove pos of piece that are the only support of friends
+        pos_choices = [pos for pos in self.pos_mobile_pieces if len(self.board[pos].piece.state["my_supports_only"]) == 0]
+        
+        if len(pos_choices) == 0:
+
+            pos_choices = [pos for pos in self.pos_mobile_pieces if len(self.board[pos].piece.state["my_supports_shared_w_friends"]) == 0]
+
+        if len(pos_choices) == 0:
+
+            pos_choices = self.pos_mobile_pieces
+
+        # Try to only include pos of pieces that are targeted more than supported.
+        pos_choices2 = [pos for pos in pos_choices if len(self.board[pos].piece.state["targeting_me"]) > len(self.board[pos].piece.state["supporting_me"])]
+
+        if len(pos_choices2) == 0:
+
+            pos_choices2 = pos_choices
+        
+        # select random piece
+
+        curr_pos = random.choice(pos_choices2)
+
+        # order new_pos by priority
+        piece = self.board[curr_pos].piece
+
+        new_pos_choices = []
+
+        for pos in piece.pos_valid_moves:
+
+            if pos in piece.state["my_targets_shared_w_friends"] and pos not in new_pos_choices:
+                new_pos_choices.append(pos)
+                
+
+            if pos in piece.state["my_paths_shared_w_friends"] and pos not in new_pos_choices:
+                new_pos_choices.append(pos)
+                
+
+            if pos in piece.state["my_targets_only"] and pos not in new_pos_choices:
+                new_pos_choices.append(pos)
+                
+
+            if pos in piece.state["my_paths_only"] and pos not in new_pos_choices:
+                new_pos_choices.append(pos)
+                
+
+            if pos in piece.state["my_paths_shared_w_enemy"] and pos not in new_pos_choices:
+                new_pos_choices.append(pos)
+                
+
+            if pos in piece.state["my_targets_supported_by_enemy"] and pos not in new_pos_choices:
+                new_pos_choices.append(pos)
+                
+        
+        if self.debug:
+            print("DEBUG.", curr_pos, new_pos_choices)
+        #select pos with hishest priority
+        new_pos = new_pos_choices[0]
+		  
+        curr_new_pos = curr_pos +","+ new_pos
+
+        print("INFO. Selection", curr_new_pos)
+
+        return curr_new_pos
 		  
 
     def move_piece(self):
 
+        if len(self.pos_mobile_pieces) == 0:
+            self.running = False
+            winner = "b" if self.turn == "w" else "w"
+            print("INFO. No Valid Moves! Winner", winner)
+
         #selet piece pos
         print("prison:", self.prison)
         print_board(self.board)
+
+        if self.debug:
+
+            for pos in self.pos_mobile_pieces:
+                
+                my_print(("DEBUG. Valid Moves:", self.board[pos].piece.name, pos, self.board[pos].piece.pos_valid_moves))
         
-        if self.automate == False and self.turn == "w":
-            user_input = input("Enter curr_pos,new_pos:")
-        else:
+
+
+        if self.algorithm == 1:
             user_input = self.algorithm1()
-            input("algorith choice: " + user_input)
-            if user_input.find("q") > -1:
-                return
+
+        elif self.algorithm == 2:
+            user_input = self.algorithm2()
+
+        else:
+            user_input = self.algorithm0()
 
         if user_input.find("q") > -1:
             self.running = False
@@ -415,19 +590,31 @@ class CH(object):
         if len(my_targets_paths) < 1:
             print("ERROR! Piece has no targets/paths")
             return
-            
-        #print(curr_pos, piece.name, my_targets_paths)
+
+        #if self.debug:    
+        #    print("DEBUG.", curr_pos, piece.name, my_targets_paths)
 
         if new_pos not in my_targets_paths:
             print("ERROR! invalid board position:", )
             return
 
+        # move piece
         old_piece = self.board[new_pos].update_piece(piece)
-        if old_piece.color != "n":
+        if old_piece.color != COLOR_EMPTY:
             self.prison[old_piece.color].append(old_piece.name)
-        moved_piece = self.board[curr_pos].update_piece(NoPiece("n "))
-        
-        #print("INFO. ", 	self.board[new_pos].piece.name, curr_pos, new_pos)
+        self.board[curr_pos].update_piece(NoPiece(COLOR_EMPTY + " "))
+
+        # check promotion
+        if piece.type == "pawn":
+            if (self.turn == "w" and POS_COORD[new_pos][1] > 7) or (self.turn == "b" and POS_COORD[new_pos][1] < 2):
+                new_piece = Queen(self.turn + "Q")
+                old_piece = self.board[new_pos].update_piece(new_piece)
+                self.prison[old_piece.color].append(old_piece.name)
+                print("INFO. *********Promotion!********")
+
+        print("INFO. ", self.board[new_pos].piece.name, curr_pos, new_pos)
+
+
 
     def select_dest_pos(self):
         pass
@@ -438,7 +625,8 @@ class CH(object):
         self.update_teams()
         self.update_pieces()
         self.update_piece_states()
-        self.evaluate_check()
+        self.update_piece_states2()
+        self.update_valid_moves()
         self.move_piece()
         
 
@@ -458,7 +646,7 @@ def test(self):
 
 # Main Function
 def main(args):
-    ch = CH(args.automate, args.verbose)
+    ch = CH(args.algorithm, args.automate, args.verbose, args.debug)
     if args.test == True:
         test(ch)
     else:
@@ -468,8 +656,10 @@ def main(args):
 if __name__=="__main__":
     #args
     parser = argparse.ArgumentParser(description="ch")
+    parser.add_argument("-g", "--algorithm", type=int, default=0, help="algorithm: 0:user_input, 1:random, 2:smart")
     parser.add_argument("-a", "--automate", action="store_true", help="automate")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
+    parser.add_argument("-d", "--debug", action="store_true", help="debug")
     parser.add_argument("-t", "--test", action="store_true", help="test")
 
     args = parser.parse_args()
