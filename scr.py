@@ -9,7 +9,7 @@ from tkinter import SEL
 
 
 ############### Helper Classes ##############
-NONE = "*"
+NONE = "_"
 class Sq(object):
     def __init__(self, bonus = NONE):
         self.bonus = bonus
@@ -19,32 +19,33 @@ class Sq(object):
 ############## Constants ##############
 OUTPUT = open("sample.txt").readlines()
 LTTR_CNT_VAL =   {""
-        "a" : {"cnt": 9, "val": 1},
-        "b" : {"cnt": 2, "val": 3},
-        "c" : {"cnt": 2, "val": 3},
-        "d" : {"cnt": 4, "val": 2},
-        "e" : {"cnt": 12,"val": 1},
-        "f" : {"cnt": 2, "val": 4},
-        "g" : {"cnt": 3, "val": 2},
-        "h" : {"cnt": 2, "val": 4},
-        "i" : {"cnt": 9, "val": 1}, 
-        "j" : {"cnt": 1, "val": 8},
-        "k" : {"cnt": 1, "val": 5},
-        "l" : {"cnt": 4, "val": 1}, 
-        "m" : {"cnt": 2, "val": 3},
-        "n" : {"cnt": 6, "val": 1}, 
-        "o" : {"cnt": 8, "val": 1}, 
-        "p" : {"cnt": 2, "val": 3}, 
-        "q" : {"cnt": 1, "val": 10},
-        "r" : {"cnt": 6, "val": 1},
-        "s" : {"cnt": 4, "val": 1},
-        "t" : {"cnt": 6, "val": 1}, 
-        "u" : {"cnt": 4, "val": 1},
-        "v" : {"cnt": 2, "val": 4}, 
-        "w" : {"cnt": 2, "val": 4},
-        "x" : {"cnt": 1, "val": 8},
-        "y" : {"cnt": 2, "val": 4},
-        "z" : {"cnt": 1, "val": 10},
+        "A" : {"cnt": 9, "val": 1},
+        "B" : {"cnt": 2, "val": 3},
+        "C" : {"cnt": 2, "val": 3},
+        "D" : {"cnt": 4, "val": 2},
+        "E" : {"cnt": 12,"val": 1},
+        "F" : {"cnt": 2, "val": 4},
+        "G" : {"cnt": 3, "val": 2},
+        "H" : {"cnt": 2, "val": 4},
+        "I" : {"cnt": 9, "val": 1}, 
+        "J" : {"cnt": 1, "val": 8},
+        "K" : {"cnt": 1, "val": 5},
+        "L" : {"cnt": 4, "val": 1}, 
+        "M" : {"cnt": 2, "val": 3},
+        "N" : {"cnt": 6, "val": 1}, 
+        "O" : {"cnt": 8, "val": 1}, 
+        "P" : {"cnt": 2, "val": 3}, 
+        "Q" : {"cnt": 1, "val": 10},
+        "R" : {"cnt": 6, "val": 1},
+        "S" : {"cnt": 4, "val": 1},
+        "T" : {"cnt": 6, "val": 1}, 
+        "U" : {"cnt": 4, "val": 1},
+        "V" : {"cnt": 2, "val": 4}, 
+        "W" : {"cnt": 2, "val": 4},
+        "X" : {"cnt": 1, "val": 8},
+        "Y" : {"cnt": 2, "val": 4},
+        "Z" : {"cnt": 1, "val": 10},
+        "*" : {"cnt": 2, "val": 0},
 }
 
 LTTR = LTTR_CNT_VAL.keys()
@@ -62,7 +63,7 @@ for x in COORD_RANGE:
 
 
 
-TW = "9"
+TW = "6"
 DW = "4"
 TL = "3"
 DL = "2"
@@ -161,7 +162,7 @@ for row in COORD_RANGE:
 def my_decorator(func):
     def wrapper(statement):
         choice = random.choice(range(len(OUTPUT)))
-        line = str(statement).replace("'","").replace(",","") +" "+ OUTPUT[choice].rstrip("\n")
+        line = str(statement).replace("'","").replace(",","")# +" "+ OUTPUT[choice].rstrip("\n")
         func(line)
     return wrapper
 
@@ -177,14 +178,15 @@ class Scr(object):
         self.letters = copy.deepcopy(DISTRO_LTTR)
         self.board = copy.deepcopy(BOARD)
         self.players = {1: copy.deepcopy(PLAYER), 2: copy.deepcopy(PLAYER)}
-        self.turn = 1
+        self.turn = 2
         self.first_word_down = False
         self.running = True
         
     def print(self):
         
-        label_str = "  1 2 3 4 5 6 7 8 9 a b c d e f "
-        my_print(label_str)
+        label_str = "  1 2 3 4 5 6 7 8 9 a b c d e f  "
+        #my_print(label_str)
+
         for row in COORD_RANGE:
             prow = 16 - row
             row_str = str(prow)
@@ -200,9 +202,10 @@ class Scr(object):
                 row_str = "e"
             elif row_str == "15":
                 row_str = "f"
-            col = row_str + " " + "".join( [ self.board[xy].ltr + " "  for xy in COORD if xy[1] == prow] ) + row_str
+            col = row_str + "|" + "".join( [ self.board[xy].ltr + "|"  for xy in COORD if xy[1] == prow] )
 
             my_print(col)
+
         my_print(label_str)
 
     def get_used_letters(self):
@@ -223,97 +226,114 @@ class Scr(object):
         
         user_input = input("ACTION. Enter Loc h/v ltrs:").rstrip()
 
-        if user_input.find("q") > -1:
+        if user_input == "q":
              print("INFO: Quit")
              self.running = False
+             return
+        
+        if user_input == "d":
+             print("INFO: Dump ltrs")
+             self.players[self.turn]["letters"] = []
              return
 
         word_placements = user_input.split(";")
         
         for wp in word_placements:
-			
-	        sel_squares = []
-	        sel_letters = copy.deepcopy(self.players[self.turn]["letters"])
-			
-	        sq1coordname_dir_word = wp.split(" ")
-	
-	        if len(sq1coordname_dir_word) != 3:
-	            print("ERROR: Invalid number of inputs", sq1coordname_dir_word)
-	            self.running = False
-	            return 
-	
-	        sq1coordname, _dir, word = sq1coordname_dir_word
-	
-	        if sq1coordname not in COORD_NAMES:
-	            print("ERROR: Invalid sq1", sq1coordname)
-	            self.running = False
-	            return 
-	
-	        if _dir not in ("h", "v"):
-	            print("ERROR: Invalid dir", _dir)
-	            self.running = False
-	            return 
-	
-	        cnt_board_letters = 0
-	        coord = COORD_NAMES[sq1coordname]
-	
-	        for ltr in word:
-	
-	            if coord not in COORD:
-	                print("ERROR! Invalid Coord", coord)
-	                self.running = False
-	                return
-	            
-	            square = copy.deepcopy(self.board[coord])
-	            
-	            if square.ltr not in BONUS_KEYS:
-	                if square.ltr == ltr:
-	                    if self.verbose:
-	                        print("DEBUG. Using sq and ltr", square.coord_name, square.ltr)
-	                    cnt_board_letters += 1
-	                else:
-	                    print("ERROR! Ltr Mismatch", square.ltr, ltr)
-	                    return
-	
-	            elif ltr not in self.players[self.turn]["letters"]:
-	                if self.first_word_down == False:
-	                    print("ERROR: Invalid ltr. No board letters", ltr)
-	                    self.running = False
-	                    return 
-	                    
-	                if square.ltr == NONE:
-	                    print("ERROR: Invalid ltr. Selected Square has no ltr", ltr)
-	                    self.running = False
-	                    return 
-	                else:
-	                    cnt_board_letters += 1
-	            
-	            else:
-	                sel_letters.pop(sel_letters.index(ltr))
-	                square.ltr = ltr
-	                self.board[coord].ltr = ltr
-	                self.board[coord].bonus = NONE
-	
-	            sel_squares.append(square)
-	            if _dir == "h":
-	                coord = (coord[0] + 1, coord[1])
-	            elif _dir == "v":
-	                coord = (coord[0], coord[1] - 1)
+         
+           sel_squares = []
+           sel_letters = copy.deepcopy(self.players[self.turn]["letters"])
+         
+           sq1coordname_dir_word = wp.split(" ")
+   
+           if len(sq1coordname_dir_word) != 3:
+               print("ERROR: Invalid number of inputs", sq1coordname_dir_word)
+               #self.running = False
+               return 
+   
+           sq1coordname, _dir, word = sq1coordname_dir_word
+   
+           if sq1coordname not in COORD_NAMES:
+               #print("ERROR: Invalid sq1", sq1coordname)
+               self.running = False
+               return 
+   
+           if _dir not in ("h", "v"):
+               #print("ERROR: Invalid dir", _dir)
+               self.running = False
+               return 
+   
+           cnt_board_letters = 0
+           coord = COORD_NAMES[sq1coordname]
+   
+           for ltr in word:
+               
+               if ltr not in LTTR:
+                   print("ERROR! Invalid Ltr", ltr)
+                   self.running = False
+                   return
+   
+               if coord not in COORD:
+                   print("ERROR! Invalid Coord", coord)
+                   self.running = False
+                   return
+               
+               square = copy.deepcopy(self.board[coord])
+               
+               if square.ltr not in BONUS_KEYS:
+                   if square.ltr == ltr:
+                       if self.verbose:
+                           print("DEBUG. Using sq and ltr", square.coord_name, square.ltr)
+                       cnt_board_letters += 1
+                   else:
+                       print("ERROR! Ltr Mismatch", square.ltr, ltr)
+                       self.running = False
+                       return
+   
+               elif ltr not in self.players[self.turn]["letters"]:
+                   if self.first_word_down == False:
+                       print("ERROR: Invalid ltr", ltr)
+                       self.running = False
+                       return 
+                   else:
+                       cnt_board_letters += 1
+               
+               else:
+                   sel_letters.pop(sel_letters.index(ltr))
+                   square.ltr = ltr
+                   self.board[coord].ltr = ltr
+                   self.board[coord].bonus = NONE
+   
+               sel_squares.append(square)
+               if _dir == "h":
+                   coord = (coord[0] + 1, coord[1])
+               elif _dir == "v":
+                   coord = (coord[0], coord[1] - 1)
 
-	        if self.first_word_down and cnt_board_letters == 0:
-	            print("ERROR! No board letters used.")
-	            self.running = False
-	            return
-	
-	        self.players[self.turn]["letters"] = copy.deepcopy(sel_letters)
-	
-	        if self.verbose:
-	            print("DEBUG: sel_squares:", [x.ltr for x in sel_squares])
-	
-	        self.get_word_value(sel_squares)
-	
-	        if self.first_word_down == False:
-	            self.first_word_down = True
+           if coord in COORD and BOARD[coord].ltr not in BONUS_KEYS:
+               print("ERROR! Adjacent ltr not included. ")
+               self.running = False
+               return
+
+           if self.first_word_down and cnt_board_letters == 0:
+               print("ERROR! No board letters used.")
+               self.running = False
+               return
+        
+           if len(sel_letters) == len(self.players[self.turn]["letters"]):
+               print("ERROR! No letters chosen.")
+               self.running = False
+               return
+               
+   
+           self.players[self.turn]["letters"] = copy.deepcopy(sel_letters)
+   
+           if self.verbose:
+               print("DEBUG: sel_squares:", [x.ltr for x in sel_squares])
+   
+           self.get_word_value(sel_squares)
+   
+           if self.first_word_down == False:
+               self.first_word_down = True
 
     def get_word_value(self, sel_squares):
 
@@ -326,7 +346,7 @@ class Scr(object):
                 multi = multi * 2
                 sq.bonus = NONE
                 print("INFO. dbl wrd!")
-            elif sq.bonus == "9":
+            elif sq.bonus == "6":
                 multi = multi * 3
                 sq.bonus = NONE
                 print("INFO. trp wrd!")
@@ -357,8 +377,8 @@ class Scr(object):
         pass
 
     def update_turn(self):
-        print("players:", self.players, "num ltrs left:", len(self.letters) )
         self.turn = 3 - self.turn
+        print("turn:", self.turn, "players:", self.players, "num ltrs left:", len(self.letters))
 
     def run(self):
 
