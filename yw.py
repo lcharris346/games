@@ -55,11 +55,21 @@ CMN_WDS_6 = (
 )
 OUTPUT = open("sample.txt").readlines()
 LTTR_VAL = {
-        "A": 1, "B": 3, "C": 3, "D": 2, "E": 1, "F": 4,
-        "G": 2, "H": 4, "I": 1, "J": 6, "K": 5, "L": 2,
-        "M": 2, "N": 2, "O": 1, "P": 3, "Q": 8, "R": 1,
-        "S": 1, "T": 1, "U": 1, "V": 5, "W": 4, "X": 6,
-        "Y": 3, "Z": 8, "*": 0
+        "*": 0,
+
+        "A": 1, "E": 1, "I": 1, "O": 1, "U": 1, "R": 1, "S": 1, "T": 1,
+
+        "D": 2, "G": 2, "L": 2,"M": 2, "N": 2, 
+
+        "B": 3, "C": 3, "P": 3, "Y": 3,
+
+        "F": 4, "H": 4, "W": 4,
+         
+        "K": 5, "V": 5,
+
+        "J": 6, "X": 6,
+         
+        "Q": 8, "Z": 8
 }
 LTTR = LTTR_VAL.keys()
 CUBE_LTTR = {
@@ -119,6 +129,29 @@ class Yw(object):
         self.ltrs = []
         self.running = True
         self.upper_bonus = 0
+
+    def check_for_7ltr_wrd(self, ltrs_list):
+            wrds = []
+            for wrd in CMN_WDS_7:
+                ltrs_str = "".join(ltrs_list)
+                if Counter(wrd) == Counter(ltrs_str):
+                    wrds.append(wrd)
+                    print("INFO. 7 ltrs form wrd: ", wrd)
+    
+            return wrds
+        
+    def check_for_6ltr_wrd(self, ltrs_list):
+        wrds = []
+        for ii in range(7):
+            ltrs_list2 = copy.deepcopy(ltrs_list)
+            ltrs_list2.pop(ii)
+            for wrd in CMN_WDS_6:
+                ltrs_str = "".join(ltrs_list2)
+                if Counter(wrd) == Counter(ltrs_str):
+                    wrds.append(wrd)
+                    print("INFO. 6 ltrs form wrd: ", wrd)
+
+        return wrds
 
     def choose_ltrs(self):
 
@@ -210,7 +243,7 @@ class Yw(object):
         
     
 
-    def calc_row_sc(self):
+    def choose_row_ltrs(self):
         if self.running == False:
             return
         
@@ -233,10 +266,10 @@ class Yw(object):
 
         row_ltrs_list = user_input.split()
 
-        while len(row_ltrs_list) != 2:
+        if len(row_ltrs_list) != 2:
             print("ERROR. Invalid row ltrs", row_ltrs_list)
-            user_input = input("INPUT. Enter row & ltrs:")
-            row_ltrs_list = user_input.split()
+            self.running = False
+            return
 
         row_to_sc, chosen_ltrs = row_ltrs_list
 
@@ -277,6 +310,7 @@ class Yw(object):
         print("INFO. row sc", self.card[row_to_sc]["sc"])
 
     def update_rnd(self):
+        self.print_card()
         self.rnd += 1
         print("INFO. rnd:", self.rnd)
         if self.rnd > 12:
@@ -289,44 +323,18 @@ class Yw(object):
     def run(self):
         while self.running == True:
             self.choose_ltrs()
-            self.calc_row_sc()
-            self.print_card()
+            self.choose_row_ltrs()
             self.update_rnd()
-
-    def check_for_7ltr_wrd(self, ltrs_list):
-        wrds = []
-        for wrd in CMN_WDS_7:
-            ltrs_str = "".join(ltrs_list)
-            if Counter(wrd) == Counter(ltrs_str):
-                wrds.append(wrd)
-                print("INFO. 7 ltrs form wrd: ", wrd)
-
-        return wrds
-    
-    def check_for_6ltr_wrd(self, ltrs_list):
-        wrds = []
-        for ii in range(7):
-            ltrs_list2 = copy.deepcopy(ltrs_list)
-            ltrs_list2.pop(ii)
-            for wrd in CMN_WDS_6:
-                ltrs_str = "".join(ltrs_list2)
-                if Counter(wrd) == Counter(ltrs_str):
-                    wrds.append(wrd)
-                    print("INFO. 6 ltrs form wrd: ", wrd)
-
-        return wrds
-
-        
 
 # Tests
 def test(args):
     self = Yw(args)
     wrds = []
-    while len(wrds) < 4:
+    while len(wrds) < 1:
         cubes_left = [0,1,2,3,4,5,6]
         ltrs_left = [ random.choice(CUBE_LTTR[x]) for x in cubes_left]
         wrds += self.check_for_7ltr_wrd(ltrs_left)
-        wrds += self.check_for_6ltr_wrd(ltrs_left)
+        self.check_for_6ltr_wrd(ltrs_left)
 
 # Main Function
 def main(args):
