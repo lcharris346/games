@@ -23,27 +23,23 @@ def my_print(statement):
 
 ######################################## CLASSES  ########################################
 class Base(object):
-    def __init__(self):
-        pass
-
-    def reset(self):
-        pass
-
+    def __init__(self, args):
+        self.automate = args.automate
+        self.verbose = args.verbose
 
     def run(self):
-
         pass
 
 # Tests
 def test(args):
-    self = Base()
+    self = Base(args)
 
 # Main Function
 def main(args):
     if args.test == True:
-        test(args.automate, args.verbose)
+        test(args)
     else:
-        ch = Base(args.automate, args.verbose)
+        ch = Base(args)
         ch.run()
 
 # Command-line Execution
