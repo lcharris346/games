@@ -5,6 +5,7 @@ import argparse
 import time
 import os
 import sys
+from datetime import datetime
 
 # Constants
 OUTPUT = open("sample.txt").readlines()
@@ -20,6 +21,9 @@ def my_decorator(func):
 @my_decorator
 def my_print(statement):
     print(statement)
+
+# Get Time since 0730
+# Constants
 
 ######################################## CLASSES  ########################################
 class Base(object):
