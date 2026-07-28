@@ -80,7 +80,7 @@ CARD = {
     "3l":    {"tp": "upper", "val":   0, "sc": 0}, 
     "2l":    {"tp": "upper", "val":   0, "sc": 0},
 
-    "bn":    {"tp": "lower", "val":  35, "sc": 0},
+    "bn":    {"tp": "lower", "val":   0, "sc": 0},
 
     "ac":    {"tp": "lower", "val":  25, "sc": 0},
 
@@ -88,7 +88,7 @@ CARD = {
     "2w":    {"tp": "lower", "val":   0, "sc": 0}, 
     "1w":    {"tp": "lower", "val":   0, "sc": 0}, 
     
-    "ch":    {"tp": "lower", "val":  35, "sc": 0},
+    "ch":    {"tp": "lower", "val":   0, "sc": 0},
      
 }
 CARD_KEYS = list(CARD.keys())
@@ -169,6 +169,7 @@ class Yw(object):
         user_input = ""
         ltrs_str = "".join(self.ltrs)
         test_wd = ""
+        
         wds = check_for_words(self.ltrs)
 
         if len(wds) > 0:
@@ -315,7 +316,8 @@ class Yw(object):
         if self.automate == True:
             user_input = self.algorithm1("choose_ltrs")
         else:
-            check_for_words(self.ltrs)
+            if self.verbose:
+                check_for_words(self.ltrs)
             user_input = input("INPUT. Enter ltrs: ")
 
             if user_input == "q":
@@ -354,7 +356,8 @@ class Yw(object):
         if self.automate == True:
             user_input = self.algorithm1("choose_ltrs")
         else:
-            check_for_words(self.ltrs)
+            if self.verbose:
+                check_for_words(self.ltrs)
             user_input = input("INPUT. Enter ltrs: ")
 
             if user_input == "q":
@@ -387,7 +390,7 @@ class Yw(object):
                 choices.append(ind)
 
         # shuffle 3
-        self.ltrs = [self.ltrs[x] for x in choices] + [random.choice(CUBE_LTTR[x]) for x in range(7-len(choices))]
+        self.ltrs = [self.ltrs[x] for x in choices] + [random.choice(CUBE_LTTR[x]) for x in range(7) if x not in choices]
 
         print("     shuffle3 ltrs: ", self.ltrs)
         
@@ -401,7 +404,8 @@ class Yw(object):
         if self.automate == True:
             user_input = self.algorithm1("choose_row_ltrs")
         else:
-            check_for_words(self.ltrs)
+            if self.verbose:
+                check_for_words(self.ltrs)
             user_input = input("INPUT. Enter row & ltrs:")
 
             if user_input == "q":

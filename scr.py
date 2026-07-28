@@ -162,7 +162,7 @@ for row in COORD_RANGE:
 def my_decorator(func):
     def wrapper(statement):
         choice = random.choice(range(len(OUTPUT)))
-        line = str(statement).replace("'","").replace(",","")# +" "+ OUTPUT[choice].rstrip("\n")
+        line = str(statement).replace("'","").replace(",","") +" "+ OUTPUT[choice].rstrip("\n")
         func(line)
     return wrapper
 
@@ -184,8 +184,7 @@ class Scr(object):
         
     def print(self):
         
-        label_str = "  1 2 3 4 5 6 7 8 9 a b c d e f  "
-        #my_print(label_str)
+        label_str = "   1 2 3 4 5 6 7 8 9 a b c d e f  "
 
         for row in COORD_RANGE:
             prow = 16 - row
@@ -202,11 +201,12 @@ class Scr(object):
                 row_str = "e"
             elif row_str == "15":
                 row_str = "f"
-            col = row_str + "|" + "".join( [ self.board[xy].ltr + "|"  for xy in COORD if xy[1] == prow] )
-
+            col = row_str + " |" + "".join( [ self.board[xy].ltr + "|"  for xy in COORD if xy[1] == prow] )
+            
             my_print(col)
 
         my_print(label_str)
+
 
     def get_used_letters(self):
         used_letters = [ x.ltr for x in self.board.values()]
@@ -224,7 +224,7 @@ class Scr(object):
 
     def place_word(self):
         
-        user_input = input("ACTION. Enter Loc h/v ltrs:").rstrip()
+        user_input = input("ACTION. Enter loc word for each word sep by ; ").rstrip()
 
         if user_input == "q":
              print("INFO: Quit")
@@ -241,16 +241,22 @@ class Scr(object):
         for wp in word_placements:
          
            sel_squares = []
-           sel_letters = copy.deepcopy(self.players[self.turn]["letters"])
+           given_ltrs = copy.deepcopy(self.players[self.turn]["letters"])
          
-           sq1coordname_dir_word = wp.split(" ")
+           sq1coordname_word_dir = wp.rstrip().split(" ")
+
+           len_sq1coordname_word_dir = len(sq1coordname_word_dir)
+
+           sq1coordname, word, _dir = "", "", "h"
    
-           if len(sq1coordname_dir_word) != 3:
-               print("ERROR: Invalid number of inputs", sq1coordname_dir_word)
+           if len_sq1coordname_word_dir < 2:
+               print("ERROR: Invalid number of inputs", sq1coordname_word_dir)
                #self.running = False
-               return 
-   
-           sq1coordname, _dir, word = sq1coordname_dir_word
+               return
+           elif len_sq1coordname_word_dir == 2:
+               sq1coordname, word = sq1coordname_word_dir
+           elif len_sq1coordname_word_dir == 3:
+               sq1coordname, word, _dir = sq1coordname_word_dir
    
            if sq1coordname not in COORD_NAMES:
                #print("ERROR: Invalid sq1", sq1coordname)
@@ -298,7 +304,7 @@ class Scr(object):
                        cnt_board_letters += 1
                
                else:
-                   sel_letters.pop(sel_letters.index(ltr))
+                   given_ltrs.pop(given_ltrs.index(ltr))
                    square.ltr = ltr
                    self.board[coord].ltr = ltr
                    self.board[coord].bonus = NONE
@@ -319,13 +325,13 @@ class Scr(object):
                self.running = False
                return
         
-           if len(sel_letters) == len(self.players[self.turn]["letters"]):
+           if len(given_ltrs) == len(self.players[self.turn]["letters"]):
                print("ERROR! No letters chosen.")
                self.running = False
                return
                
    
-           self.players[self.turn]["letters"] = copy.deepcopy(sel_letters)
+           self.players[self.turn]["letters"] = copy.deepcopy(given_ltrs)
    
            if self.verbose:
                print("DEBUG: sel_squares:", [x.ltr for x in sel_squares])
