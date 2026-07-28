@@ -7,7 +7,7 @@ import os
 import sys
 from collections import Counter
 from datetime import datetime
-
+os.system('cls' if os.name == 'nt' else 'clear')
 ################## Constants ################################
 
 OUTPUT = open("sample.txt").readlines()

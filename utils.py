@@ -16,7 +16,7 @@ def get_work_time():
     now = datetime.now()
 
     # Create a datetime object for 07:30 local time today
-    target = now.replace(hour=7, minute=30, second=0, microsecond=0)
+    target = now.replace(hour=6, minute=30, second=0, microsecond=0)
 
     # If it's currently before 07:30, you might want the 07:30 from yesterday
     # (Uncomment the block below if you want negative values or previous-day behavior)

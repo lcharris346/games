@@ -5,7 +5,7 @@ import argparse
 import time
 import os
 import sys
-
+os.system('cls' if os.name == 'nt' else 'clear')
 ################################ Constants, Supporting Classes  #################################
 # OS
 CLEAR = 'cls' if os.name == 'nt' else 'clear'

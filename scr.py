@@ -7,7 +7,7 @@ import os
 import sys
 from tkinter import SEL
 
-
+os.system('cls' if os.name == 'nt' else 'clear')
 ############### Helper Classes ##############
 NONE = "_"
 class Sq(object):
@@ -162,7 +162,7 @@ for row in COORD_RANGE:
 def my_decorator(func):
     def wrapper(statement):
         choice = random.choice(range(len(OUTPUT)))
-        line = str(statement).replace("'","").replace(",","") +" "+ OUTPUT[choice].rstrip("\n")
+        line = str(statement).replace("'","").replace(",","")  +" "+ OUTPUT[choice].rstrip("\n")
         func(line)
     return wrapper
 
@@ -241,22 +241,19 @@ class Scr(object):
         for wp in word_placements:
          
            sel_squares = []
+
            given_ltrs = copy.deepcopy(self.players[self.turn]["letters"])
          
            sq1coordname_word_dir = wp.rstrip().split(" ")
 
            len_sq1coordname_word_dir = len(sq1coordname_word_dir)
-
-           sq1coordname, word, _dir = "", "", "h"
    
-           if len_sq1coordname_word_dir < 2:
+           if len_sq1coordname_word_dir != 3:
                print("ERROR: Invalid number of inputs", sq1coordname_word_dir)
                #self.running = False
                return
-           elif len_sq1coordname_word_dir == 2:
-               sq1coordname, word = sq1coordname_word_dir
-           elif len_sq1coordname_word_dir == 3:
-               sq1coordname, word, _dir = sq1coordname_word_dir
+
+           sq1coordname, _dir, word,  = sq1coordname_word_dir
    
            if sq1coordname not in COORD_NAMES:
                #print("ERROR: Invalid sq1", sq1coordname)
@@ -347,7 +344,10 @@ class Scr(object):
         multi = 1
 
         for sq in sel_squares:
-
+            if sq.ltr not in LTTR:
+                print("ERROR: ltr not in ltrs.", sq.ltr)
+                self.running = False
+                return
             if sq.bonus == "4":
                 multi = multi * 2
                 sq.bonus = NONE

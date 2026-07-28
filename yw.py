@@ -6,7 +6,7 @@ import time
 import os
 import sys
 from collections import Counter
-
+os.system('cls' if os.name == 'nt' else 'clear')
 ################## Notes ################################
 
 """
@@ -350,7 +350,10 @@ class Yw(object):
                 choices.append(ind)
 
         # shuffle 2
-        self.ltrs = [self.ltrs[x] for x in choices] + [random.choice(CUBE_LTTR[x]) for x in range(7) if x not in choices]
+        for x in range(7):
+            if x not in choices:
+                self.ltrs[x] = random.choice(CUBE_LTTR[x])
+
         print("   shuffle2 ltrs_left: ", self.ltrs)
 
         if self.automate == True:
@@ -390,7 +393,9 @@ class Yw(object):
                 choices.append(ind)
 
         # shuffle 3
-        self.ltrs = [self.ltrs[x] for x in choices] + [random.choice(CUBE_LTTR[x]) for x in range(7) if x not in choices]
+        for x in range(7):
+            if x not in choices:
+                self.ltrs[x] = random.choice(CUBE_LTTR[x])
 
         print("     shuffle3 ltrs: ", self.ltrs)
         

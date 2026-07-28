@@ -8,7 +8,7 @@ import os
 import sys
 import matplotlib.pyplot as plt
 import statistics
-
+os.system('cls' if os.name == 'nt' else 'clear')
 # Constants
 OUTPUT = open("sample.txt").readlines()
 COLUMNS = [0] *5
