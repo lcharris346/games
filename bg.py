@@ -7,6 +7,9 @@ import os
 import sys
 from collections import Counter
 from datetime import datetime
+import matplotlib.pyplot as plt
+from PIL import Image
+
 os.system('cls' if os.name == 'nt' else 'clear')
 ################## Constants ################################
 
@@ -47,6 +50,13 @@ LTTR =  [CUBE_LTTR[x]["ltrs"] for x in CUBES]
 
 VOWELS = "AEIOUY"
 
+ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+
+IMAGES = {x:Image.open("ltrs/" + x + ".png") for x in ALPHABET}
+
+print("DEBUG:", IMAGES.keys())
+
+
 # Functions
 
 def get_conn_cubes(cube, conn_cubes):
@@ -82,6 +92,33 @@ def is_sublist(small_list, big_list):
     # A remaining positive count means big_list lacks that item
     return not (Counter(small_list) - Counter(big_list))
 
+def graph_ltrs(ltrs):
+    
+
+    # 1. Create a 4x4 grid of subplots
+    fig, axs = plt.subplots(4, 4, figsize=(2,2))
+
+    # 2. Flatten the 2D array of axes for easy 1D iteration
+    axs = axs.ravel()
+
+    # 3. Loop through your 16 images and plot them
+    for ii in range(16):
+        # Replace 'images[i]' with your actual image array/data
+        ltr = ltrs[ii]
+        lower_ltr = ltr.lower()
+        angle = random.choice([0,90,180,-90])
+        rotated_img = IMAGES[lower_ltr].rotate(angle)
+        axs[ii].imshow(rotated_img)
+    
+        # Optional: Turn off axis lines and labels for cleaner look
+        axs[ii].axis('off')
+
+    # 4. Automatically adjust padding between subplots
+    plt.tight_layout()
+    fig.canvas.manager.window.geometry("+2000+0")
+    plt.show(block = False)
+    plt.pause(0.1)
+
 ######################################## Classes  ########################################
 class BG(object):
     def __init__(self, args):
@@ -104,13 +141,14 @@ class BG(object):
         print([x for x in self.ltrs[ 8:12]])
         print([x for x in self.ltrs[12:16]])
 
+    
+
     def algorithm1(self):
         pass
         
     def choose_words(self):
 
-        if self.ctr % 5 == 0:
-            self.print_ltrs()
+        
 
         user_input = ""
 
@@ -165,6 +203,7 @@ class BG(object):
     def shuffle_cubes(self):
         self.ltrs = [random.choice(LTTR[x]) for x in CUBES]
         self.words = []
+        graph_ltrs(self.ltrs)
 
     def run(self):
         # shuffle 

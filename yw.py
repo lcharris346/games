@@ -67,28 +67,28 @@ CUBE_LTTR = {
 }
 
 CARD = {
-    "y1":    {"tp": "lower", "val":  50, "sc": 0},
-    "y2":    {"tp": "lower", "val": 100, "sc": 0},
-    "y3":    {"tp": "lower", "val": 100, "sc": 0},
-    "y4":    {"tp": "lower", "val": 100, "sc": 0},
+    "y1":    {"tp": "lower", "val":  50, "sc": 0, "ltrs": ""},
+    "y2":    {"tp": "lower", "val": 100, "sc": 0, "ltrs": ""},
+    "y3":    {"tp": "lower", "val": 100, "sc": 0, "ltrs": ""},
+    "y4":    {"tp": "lower", "val": 100, "sc": 0, "ltrs": ""},
 
-    "av":    {"tp": "lower", "val":  35, "sc": 0},
+    "av":    {"tp": "lower", "val":  35, "sc": 0, "ltrs": ""},
 
-    "6l":    {"tp": "upper", "val":   0, "sc": 0},
-    "5l":    {"tp": "upper", "val":   0, "sc": 0},
-    "4l":    {"tp": "upper", "val":   0, "sc": 0},
-    "3l":    {"tp": "upper", "val":   0, "sc": 0}, 
-    "2l":    {"tp": "upper", "val":   0, "sc": 0},
+    "6l":    {"tp": "upper", "val":   0, "sc": 0, "ltrs": ""},
+    "5l":    {"tp": "upper", "val":   0, "sc": 0, "ltrs": ""},
+    "4l":    {"tp": "upper", "val":   0, "sc": 0, "ltrs": ""},
+    "3l":    {"tp": "upper", "val":   0, "sc": 0, "ltrs": ""}, 
+    "2l":    {"tp": "upper", "val":   0, "sc": 0, "ltrs": ""},
 
-    "bn":    {"tp": "lower", "val":   0, "sc": 0},
+    "bn":    {"tp": "lower", "val":   0, "sc": 0, "ltrs": ""},
 
-    "ac":    {"tp": "lower", "val":  25, "sc": 0},
+    "ac":    {"tp": "lower", "val":  25, "sc": 0, "ltrs": ""},
 
-    "3w":    {"tp": "lower", "val":   0, "sc": 0},
-    "2w":    {"tp": "lower", "val":   0, "sc": 0}, 
-    "1w":    {"tp": "lower", "val":   0, "sc": 0}, 
+    "3w":    {"tp": "lower", "val":   0, "sc": 0, "ltrs": ""},
+    "2w":    {"tp": "lower", "val":   0, "sc": 0, "ltrs": ""}, 
+    "1w":    {"tp": "lower", "val":   0, "sc": 0, "ltrs": ""}, 
     
-    "ch":    {"tp": "lower", "val":   0, "sc": 0},
+    "ch":    {"tp": "lower", "val":   0, "sc": 0, "ltrs": ""},
      
 }
 CARD_KEYS = list(CARD.keys())
@@ -320,7 +320,7 @@ class Yw(object):
                 check_for_words(self.ltrs)
             user_input = input("INPUT. Enter ltrs: ")
 
-            if user_input == "q":
+            if user_input == "quit":
                 print("INFO. quit")
                 self.running = False
                 return
@@ -328,6 +328,7 @@ class Yw(object):
             if user_input == "a":
                 user_input = "".join(self.ltrs)
         
+        user_input = user_input.upper()
         cnt_ltrs = {}
         choices = []
         for ltr in user_input:
@@ -363,7 +364,7 @@ class Yw(object):
                 check_for_words(self.ltrs)
             user_input = input("INPUT. Enter ltrs: ")
 
-            if user_input == "q":
+            if user_input == "quit":
                 print("INFO. quit")
                 self.running = False
                 return
@@ -371,6 +372,7 @@ class Yw(object):
             if user_input == "a":
                 user_input = "".join(self.ltrs)
         
+        user_input = user_input.upper()
         cnt_ltrs = {}
         choices = []
         for ltr in user_input:
@@ -413,7 +415,7 @@ class Yw(object):
                 check_for_words(self.ltrs)
             user_input = input("INPUT. Enter row & ltrs:")
 
-            if user_input == "q":
+            if user_input == "quit":
                 print("INFO. quit")
                 self.running = False
                 return
@@ -440,6 +442,7 @@ class Yw(object):
 
         kept_ltrs = []
 
+        chosen_ltrs = chosen_ltrs.upper()
         for ltr in chosen_ltrs:
             if ltr in self.ltrs:
                 add_ltr = self.ltrs.pop(self.ltrs.index(ltr))
@@ -520,8 +523,8 @@ class Yw(object):
             self.running = False
             
     def print_card(self):
-        card_score = [ key + ":" + str(self.card[key]["sc"]) for key in CARD_KEYS]
-        print("INFO. total sc:", self.sc, card_score)
+        card_score = [ key + ":" + str(self.card[key]["sc"]) for key in CARD_KEYS if self.card[key]["sc"] > 0 ]
+        print("INFO. Card", self.sc, card_score)
 
     def run(self):
         while self.running == True:

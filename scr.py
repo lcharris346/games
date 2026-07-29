@@ -219,7 +219,7 @@ class Scr(object):
         self.letters = self.letters[num:]
         self.players[self.turn]["letters"] += new_letters
         print("INFO. Updated ltrs:", self.players[self.turn]["letters"])
-        if len(self.letters) < 1:
+        if len(self.players[self.turn]["letters"]) < 1:
             self.running = False
 
     def place_word(self):
@@ -244,7 +244,7 @@ class Scr(object):
 
            given_ltrs = copy.deepcopy(self.players[self.turn]["letters"])
          
-           sq1coordname_word_dir = wp.rstrip().split(" ")
+           sq1coordname_word_dir = wp.strip().rstrip().split(" ")
 
            len_sq1coordname_word_dir = len(sq1coordname_word_dir)
    
@@ -268,16 +268,18 @@ class Scr(object):
            cnt_board_letters = 0
            coord = COORD_NAMES[sq1coordname]
    
+           word = word.upper()
+           ltrs_not_added = True
            for ltr in word:
                
                if ltr not in LTTR:
                    print("ERROR! Invalid Ltr", ltr)
-                   self.running = False
+                   self.running = ltrs_not_added
                    return
    
                if coord not in COORD:
                    print("ERROR! Invalid Coord", coord)
-                   self.running = False
+                   self.running = ltrs_not_added
                    return
                
                square = copy.deepcopy(self.board[coord])
@@ -289,13 +291,13 @@ class Scr(object):
                        cnt_board_letters += 1
                    else:
                        print("ERROR! Ltr Mismatch", square.ltr, ltr)
-                       self.running = False
+                       self.running = ltrs_not_added
                        return
    
                elif ltr not in self.players[self.turn]["letters"]:
                    if self.first_word_down == False:
                        print("ERROR: Invalid ltr", ltr)
-                       self.running = False
+                       self.running = ltrs_not_added
                        return 
                    else:
                        cnt_board_letters += 1
@@ -305,7 +307,8 @@ class Scr(object):
                    square.ltr = ltr
                    self.board[coord].ltr = ltr
                    self.board[coord].bonus = NONE
-   
+                   ltrs_not_added = False
+
                sel_squares.append(square)
                if _dir == "h":
                    coord = (coord[0] + 1, coord[1])
@@ -314,17 +317,17 @@ class Scr(object):
 
            if coord in COORD and BOARD[coord].ltr not in BONUS_KEYS:
                print("ERROR! Adjacent ltr not included. ")
-               self.running = False
+               self.running = ltrs_not_added
                return
 
            if self.first_word_down and cnt_board_letters == 0:
                print("ERROR! No board letters used.")
-               self.running = False
+               self.running = ltrs_not_added
                return
         
            if len(given_ltrs) == len(self.players[self.turn]["letters"]):
                print("ERROR! No letters chosen.")
-               self.running = False
+               self.running = ltrs_not_added
                return
                
    
@@ -332,13 +335,14 @@ class Scr(object):
    
            if self.verbose:
                print("DEBUG: sel_squares:", [x.ltr for x in sel_squares])
-   
-           self.get_word_value(sel_squares)
+
+           num_gvn_ltrs_used = 7 - len(given_ltrs)
+           self.get_word_value(sel_squares, num_gvn_ltrs_used)
    
            if self.first_word_down == False:
                self.first_word_down = True
 
-    def get_word_value(self, sel_squares):
+    def get_word_value(self, sel_squares, num_gvn_ltrs_used):
 
         value = 0
         multi = 1
@@ -369,8 +373,7 @@ class Scr(object):
 
         value = value * multi
 
-        num_letters = len(sel_squares)
-        if (self.first_word_down == 0 and num_letters > 6) or (num_letters > 7):
+        if num_gvn_ltrs_used > 6:
             value += 50
             print("INFO. All ltrs used", sq.ltr)
 
