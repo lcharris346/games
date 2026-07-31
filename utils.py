@@ -28,6 +28,9 @@ def get_work_time():
     diff = now - target
     hours_since = diff.total_seconds() / 3600
 
+    if hours_since > 5:
+        hours_since -= 0.5 # lunch
+
     money_since = hours_since * 86.06
 
     print("%2.2f($%5.2f)" % (hours_since, money_since) )

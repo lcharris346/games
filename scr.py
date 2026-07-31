@@ -10,6 +10,7 @@ from tkinter import SEL
 os.system('cls' if os.name == 'nt' else 'clear')
 ############### Helper Classes ##############
 NONE = "_"
+SQ_SEP = "|"
 class Sq(object):
     def __init__(self, bonus = NONE):
         self.bonus = bonus
@@ -184,7 +185,7 @@ class Scr(object):
         
     def print(self):
         
-        label_str = "   1 2 3 4 5 6 7 8 9 a b c d e f  "
+        label_str = "  1 2 3 4 5 6 7 8 9 a b c d e f  "
 
         for row in COORD_RANGE:
             prow = 16 - row
@@ -201,7 +202,7 @@ class Scr(object):
                 row_str = "e"
             elif row_str == "15":
                 row_str = "f"
-            col = row_str + " |" + "".join( [ self.board[xy].ltr + "|"  for xy in COORD if xy[1] == prow] )
+            col = row_str + SQ_SEP + "".join( [ self.board[xy].ltr + SQ_SEP  for xy in COORD if xy[1] == prow] )
             
             my_print(col)
 
@@ -238,6 +239,8 @@ class Scr(object):
 
         word_placements = user_input.split(";")
         
+        ltrs_not_added = True
+
         for wp in word_placements:
          
            sel_squares = []
@@ -269,7 +272,7 @@ class Scr(object):
            coord = COORD_NAMES[sq1coordname]
    
            word = word.upper()
-           ltrs_not_added = True
+           
            for ltr in word:
                
                if ltr not in LTTR:
@@ -288,6 +291,8 @@ class Scr(object):
                    if square.ltr == ltr:
                        if self.verbose:
                            print("DEBUG. Using sq and ltr", square.coord_name, square.ltr)
+                           if wp == word_placements[-1]:
+                                self.board[coord].bonus = NONE
                        cnt_board_letters += 1
                    else:
                        print("ERROR! Ltr Mismatch", square.ltr, ltr)
@@ -306,7 +311,8 @@ class Scr(object):
                    given_ltrs.pop(given_ltrs.index(ltr))
                    square.ltr = ltr
                    self.board[coord].ltr = ltr
-                   self.board[coord].bonus = NONE
+                   if wp == word_placements[-1]:
+                      self.board[coord].bonus = NONE
                    ltrs_not_added = False
 
                sel_squares.append(square)

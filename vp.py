@@ -446,9 +446,8 @@ class Vp(object):
         random.seed()
 
     def update_paytable(self):
-        if self.activity == "cl":
-            for key in VALUETABLE.keys():
-                VALUETABLE[key][" fh"] = 45
+        if self.denom > 0.5:
+            self.valuetable[" fh"] = 45
 
 
     def set_num_sets(self, num_sets):
@@ -1162,19 +1161,28 @@ def main(args):
         addition_ctr_array = [0]*args.iterations
         ctr_array = [0]*args.iterations
         max_win_array = [0]*args.iterations
-        succ_cnt = 0
-        threshold = 0.2 * args.credit * args.denom
         stack_type_hist = copy.deepcopy(STACK_TYPE_HIST)
+
+        succ_cnt = 0
+        max_cost = args.denom * args.num_sets * MAX_COST[args.activity]
+        max_ctr = 360 # Divide by 12 to get ave min
+
+        if args.threshold == 0:
+
+            args.threshold = VALUETABLE[args.addition_type]["  q"] * args.denom
+        
         
         for ii in range(args.iterations):
 
             vp = Vp(args.activity, args.addition_type, args.num_sets, args.credit, args.denom, args.automate, args.verbose, stack_type_hist)
-            max_ctr = 180 # Divide by 12 to get ave min
+            
             credit_array = [0]*max_ctr
             net_50_loss = False
             fourth_credit = False
             succ = False
             ctr = 0
+            lost_most = False
+            
 
             while vp.credit >= vp.cost and ctr < max_ctr :
 
@@ -1184,16 +1192,20 @@ def main(args):
 
                 succ = False
 
-                
-                if vp.win >= threshold or vp.credit >= args.credit + threshold:
+                if lost_most == False and vp.credit < 0.5 * args.credit:
+                    lost_most = True
 
+                if any( (vp.win >= args.threshold, 
+                         vp.credit >= args.credit + args.threshold, 
+                         lost_most and vp.credit >= args.credit, 
+                         ctr > 0.5 * max_ctr and vp.credit >= args.credit) ):
+                    
                     succ_cnt += 1
                     succ = True
                     break
-
-            #if succ == False and vp.credit >= args.credit:
-
-            #    succ_cnt += 1
+                    
+            if succ == False and vp.credit >= 100 * vp.max_cost:
+                succ_cnt += 1
 
             final_rtp_array[ii] = vp.total_rtp / (ctr)
             final_credit_array[ii] = vp.credit
@@ -1242,6 +1254,7 @@ if __name__=="__main__":
     parser.add_argument("-a", "--automate", action="store_true", help="automate")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
     parser.add_argument("-t", "--test", action="store_true", help="test")
+    parser.add_argument("-th", "--threshold", type=float, default=0)
     
     args = parser.parse_args()
     print(args)

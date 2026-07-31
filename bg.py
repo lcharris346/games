@@ -115,7 +115,9 @@ def graph_ltrs(ltrs):
 
     # 4. Automatically adjust padding between subplots
     plt.tight_layout()
-    fig.canvas.manager.window.geometry("+2000+0")
+    fig.canvas.manager.window.geometry("+2000+800")
+
+    # 6. show figure  non-blocking
     plt.show(block = False)
     plt.pause(0.1)
 
@@ -165,7 +167,7 @@ class BG(object):
             self.running = False
             return
 
-        wd = user_input
+        wd = user_input.upper()
 
         if self.validate_word(wd):
 
@@ -220,8 +222,8 @@ class BG(object):
 
 # Tests
 def test(args):
-    self = BG(args)
-    self.choose_words()
+    ltrs = ALPHABET[:16]
+    graph_ltrs(ltrs)
     
 # Main Function
 def main(args):
