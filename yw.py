@@ -203,7 +203,7 @@ class Yw(object):
         vowels = [x for x in self.ltrs if x in VOWELS]
         len_vowels = len(vowels)
 
-        if step == "choose_ltrs":
+        if step == "chs_ltrs":
 
             if "ac" in self.rows_left and  len_consonants == 7:
 
@@ -223,7 +223,7 @@ class Yw(object):
 
             print("ALG1. Enter ltrs: ", user_input)
 
-        elif step == "choose_row_ltrs":
+        elif step == "chs_row_ltrs":
 
             if   len_test_wd == 7:
 
@@ -305,16 +305,16 @@ class Yw(object):
 
         return user_input
         
-    def choose_ltrs(self):
+    def chs_ltrs(self):
 
         print("\nINFO: rows_left", self.rows_left)
 
-        # shuffle 1
+        # shf 1
         self.ltrs = [random.choice(CUBE_LTTR[x]) for x in range(7)]
-        print("   shuffle1 ltrs: ", self.ltrs)
+        print("   shf1 ltrs: ", self.ltrs)
 
         if self.automate == True:
-            user_input = self.algorithm1("choose_ltrs")
+            user_input = self.algorithm1("chs_ltrs")
         else:
             if self.verbose:
                 check_for_words(self.ltrs)
@@ -350,15 +350,15 @@ class Yw(object):
                 ind = indices[cnt_ltrs[ltr]]
                 choices.append(ind)
 
-        # shuffle 2
+        # shf 2
         for x in range(7):
             if x not in choices:
                 self.ltrs[x] = random.choice(CUBE_LTTR[x])
 
-        print("   shuffle2 ltrs_left: ", self.ltrs)
+        print("   shf2 ltrs: ", self.ltrs)
 
         if self.automate == True:
-            user_input = self.algorithm1("choose_ltrs")
+            user_input = self.algorithm1("chs_ltrs")
         else:
             if self.verbose:
                 check_for_words(self.ltrs)
@@ -394,22 +394,20 @@ class Yw(object):
                 ind = indices[cnt_ltrs[ltr]]
                 choices.append(ind)
 
-        # shuffle 3
+        # shf 3
         for x in range(7):
             if x not in choices:
                 self.ltrs[x] = random.choice(CUBE_LTTR[x])
 
-        print("     shuffle3 ltrs: ", self.ltrs)
+        print("     shf3 ltrs: ", self.ltrs)
         
-    def choose_row_ltrs(self):
+    def chs_row_ltrs(self):
         if self.running == False:
             return
         
-        print("\nINFO. rows_lft: ", self.rows_left)
-        print("        ltrs_left:", self.ltrs)
 
         if self.automate == True:
-            user_input = self.algorithm1("choose_row_ltrs")
+            user_input = self.algorithm1("chs_row_ltrs")
         else:
             if self.verbose:
                 check_for_words(self.ltrs)
@@ -528,16 +526,16 @@ class Yw(object):
 
     def run(self):
         while self.running == True:
-            self.choose_ltrs()
-            self.choose_row_ltrs()
+            self.chs_ltrs()
+            self.chs_row_ltrs()
             self.update_rnd()
 
 # Tests
 def test(args):
     self = Yw(args)
     self.ltrs = input("TEST: enter ltrs: ")
-    self.algorithm1("choose_ltrs")
-    self.algorithm1("choose_row_ltrs")
+    self.algorithm1("chs_ltrs")
+    self.algorithm1("chs_row_ltrs")
 
 # Main Function
 def main(args):

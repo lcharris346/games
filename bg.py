@@ -96,7 +96,8 @@ def graph_ltrs(ltrs):
     
 
     # 1. Create a 4x4 grid of subplots
-    fig, axs = plt.subplots(4, 4, figsize=(2,2))
+    fig, axs = plt.subplots(4, 4, figsize=(1.5,1.5))
+    
 
     # 2. Flatten the 2D array of axes for easy 1D iteration
     axs = axs.ravel()
@@ -118,6 +119,8 @@ def graph_ltrs(ltrs):
     fig.canvas.manager.window.geometry("+2000+800")
 
     # 6. show figure  non-blocking
+    fig.set_facecolor('white')
+    plt.subplots_adjust(wspace=0, hspace=0.1)
     plt.show(block = False)
     plt.pause(0.1)
 

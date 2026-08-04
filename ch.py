@@ -323,10 +323,9 @@ def print_board(board):
 ######################################## Main Class  ########################################
 
 class CH(object):
-    def __init__(self, algorithm, automate, verbose, debug):
+    def __init__(self, algorithm, step, debug):
         self.algorithm = algorithm
-        self.automate = automate
-        self.verbose = verbose
+        self.step = step
         self.debug = debug
 
         self.board = copy.deepcopy(BOARD)
@@ -560,6 +559,13 @@ class CH(object):
         
 
 
+        if self.algorithm > 0 and self.step == True:
+            user_input0 = input("INPUT. continue...")
+            if user_input0 == "q":
+                self.running = False
+                return
+            
+
         if self.algorithm == 1:
             user_input = self.algorithm1()
 
@@ -646,7 +652,7 @@ def test(self):
 
 # Main Function
 def main(args):
-    ch = CH(args.algorithm, args.automate, args.verbose, args.debug)
+    ch = CH(args.algorithm, args.step, args.debug)
     if args.test == True:
         test(ch)
     else:
@@ -656,9 +662,8 @@ def main(args):
 if __name__=="__main__":
     #args
     parser = argparse.ArgumentParser(description="ch")
-    parser.add_argument("-g", "--algorithm", type=int, default=0, help="algorithm: 0:user_input, 1:random, 2:smart")
-    parser.add_argument("-a", "--automate", action="store_true", help="automate")
-    parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
+    parser.add_argument("-a", "--algorithm", type=int, default=0, help="algorithm: 0:user_input, 1:random, 2:smart")
+    parser.add_argument("-s", "--step", action="store_true", help="step")
     parser.add_argument("-d", "--debug", action="store_true", help="debug")
     parser.add_argument("-t", "--test", action="store_true", help="test")
 

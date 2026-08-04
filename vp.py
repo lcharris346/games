@@ -10,7 +10,7 @@ import os
 import sys
 import matplotlib.pyplot as plt
 import statistics
-os.system('cls' if os.name == 'nt' else 'clear')
+#os.system('cls' if os.name == 'nt' else 'clear')
 # Constants         1    2    3    4    5    6    7    8    9   10   11   12   13          
 STACK_ELEMENTS=(    "2s","3s","4s","5s","6s","7s","8s","9s","Ts","Js","Qs","Ks","As",   
                 #  14   15   16   17   18   19   20   21   22   23   24   25   26    
@@ -1165,7 +1165,7 @@ def main(args):
 
         succ_cnt = 0
         max_cost = args.denom * args.num_sets * MAX_COST[args.activity]
-        max_ctr = 360 # Divide by 12 to get ave min
+        max_ctr = 720 # Divide by 12 to get ave min
 
         if args.threshold == 0:
 

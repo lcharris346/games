@@ -15,7 +15,7 @@ def get_work_time():
     # Get current local date and time
     now = datetime.now()
 
-    # Create a datetime object for 07:30 local time today
+    # Create a datetime object for 06:30 local time today
     target = now.replace(hour=6, minute=30, second=0, microsecond=0)
 
     # If it's currently before 07:30, you might want the 07:30 from yesterday
@@ -33,7 +33,7 @@ def get_work_time():
 
     money_since = hours_since * 86.06
 
-    print("%2.2f($%5.2f)" % (hours_since, money_since) )
+    print("%2.2fhrs($%5.2f)" % (hours_since, money_since) )
 
     return hours_since, money_since
 
