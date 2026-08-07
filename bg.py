@@ -54,7 +54,7 @@ ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
 IMAGES = {x:Image.open("ltrs/" + x + ".png") for x in ALPHABET}
 
-print("DEBUG:", IMAGES.keys())
+#print("DEBUG:", IMAGES.keys())
 
 
 # Functions
@@ -96,7 +96,7 @@ def graph_ltrs(ltrs):
     
 
     # 1. Create a 4x4 grid of subplots
-    fig, axs = plt.subplots(4, 4, figsize=(1.5,1.5))
+    fig, axs = plt.subplots(4, 4, figsize=(1,1))
     
 
     # 2. Flatten the 2D array of axes for easy 1D iteration
@@ -116,11 +116,11 @@ def graph_ltrs(ltrs):
 
     # 4. Automatically adjust padding between subplots
     plt.tight_layout()
-    fig.canvas.manager.window.geometry("+2000+800")
+    fig.canvas.manager.window.geometry("160x160+1600+900")
 
     # 6. show figure  non-blocking
     fig.set_facecolor('white')
-    plt.subplots_adjust(wspace=0, hspace=0.1)
+    plt.subplots_adjust(wspace=0.1, hspace=0.1)
     plt.show(block = False)
     plt.pause(0.1)
 
@@ -225,8 +225,9 @@ class BG(object):
 
 # Tests
 def test(args):
-    ltrs = ALPHABET[:16]
-    graph_ltrs(ltrs)
+    graph_ltrs(ALPHABET[:16])
+    graph_ltrs(ALPHABET[10:26])
+    input("end...")
     
 # Main Function
 def main(args):
