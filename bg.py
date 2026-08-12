@@ -154,8 +154,6 @@ class BG(object):
         
     def choose_words(self):
 
-        
-
         user_input = ""
 
         if self.automate == True:
@@ -210,6 +208,11 @@ class BG(object):
         self.ltrs = [random.choice(LTTR[x]) for x in CUBES]
         self.words = []
         graph_ltrs(self.ltrs)
+
+        if "q" in self.ltrs:
+            ind_q  = self.ltrs.index("q")
+            self.ltrs.insert(ind_q, "u")
+            print("INFO. Added u for q in ltrs")
 
     def run(self):
         # shuffle 
