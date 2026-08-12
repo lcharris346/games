@@ -11,7 +11,7 @@ from datetime import datetime
 
 
 def get_work_time(break_taken, verbose):
-    print("work-pay \t    time, gross, net")
+    print("work-pay:\n time-frame \ttime,     gross,     net")
 
     # Get current local date and time
     now = datetime.now()
@@ -21,33 +21,53 @@ def get_work_time(break_taken, verbose):
     # Create a datetime object for 06:30 local time today
     target = now.replace(hour=6, minute=30, second=0, microsecond=0)
     diff = now - target
-    hours_since = diff.total_seconds() / 3600 - break_taken
-    if hours_since > 8.00:
-        hours_since = 8.00
+    hours_since = diff.total_seconds() / 3600 - break_taken/60
     gross_since = hours_since * 86.06
-    print("today        \t%4.2f hrs, $%4.2f, $%4.2f" % (hours_since, gross_since, gross_since * net2gross) )
+    print(" today        \t%4.2f hrs, $%4.2f,   $%4.2f" % (hours_since, gross_since, gross_since * net2gross) )
 
     if verbose == True:
 
-        target2 = now.replace(year=2026, month=7, day=24)
+        target2 = now.replace(year=2026, month=8, day=7)
         diff2 = now - target2
         days_since2 = diff2.days
         salary_since2 = days_since2 * salary_per_day
-        print("pay-period   \t %d days, $%4.2f, $%4.2f" % (days_since2, salary_since2, salary_since2 * net2gross) )
+        print(" pay-period   \t  %d days, $%4.2f,  $%4.2f" % (days_since2, salary_since2, salary_since2 * net2gross) )
 
         target3 = now.replace(year=2026, month=4, day=24)
         diff3 = now - target3
         days_since3 = diff3.days
         salary_since3 = days_since3 * salary_per_day
-        print("year-to-date \t%d days, $%5.2f, $%4.2f" % (days_since3, salary_since3, salary_since3 * net2gross) )
+        print(" year-to-date \t%d days, $%5.2f, $%4.2f" % (days_since3, salary_since3, salary_since3 * net2gross) )
+
+        target5 = now.replace(year=2027, month=4, day=24)
+        diff5 = target5 - now
+        years_since5 = diff5.days / 365.23
+        days_since5 = diff5.days % 365.23
+        months_since5 = days_since5 / 30
+        days_since5b = days_since5 % 30
+        print("countdowns:\n 1-yr work anniversary  %d mo, %d days" % (months_since5, days_since5b) )
+
+        target6 = now.replace(year=2030, month=6, day=1)
+        diff6 = target6 - now
+        years_since6 = diff6.days / 365.23
+        days_since6 = diff6.days % 365.23
+        print(" child-support \t\t%d years & %d days" % (years_since6, days_since6) )
+
+        target7 = now.replace(year=2031, month=1, day=1)
+        diff7 = target7 - now
+        years_since7 = diff7.days / 365.23
+        days_since7 = diff7.days % 365.23
+        print(" texas retirement \t%d years & %d days" % (years_since7, days_since7) )
 
         target4 = now.replace(year=2041, month=8, day=1)
         diff4 = target4 - now
-        
         years_since4 = diff4.days / 365.23
         days_since4 = diff4.days % 365.23
+        print(" social-security ret \t%d years & %d days" % (years_since4, days_since4) )
+
         
-        print("retirement \t%d years & %d days" % (years_since4, days_since4) )
+
+        
 
     return hours_since
 
@@ -74,7 +94,7 @@ if __name__=="__main__":
     parser.add_argument("-a", "--automate", action="store_true", help="automate")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
     parser.add_argument("-t", "--test", action="store_true", help="test")
-    parser.add_argument("-b", "--break_taken", type=float, default = 0.0, help="break_taken in hrs")
+    parser.add_argument("-b", "--break_taken", type=float, default = 0.0, help="break_taken in min")
 
     args = parser.parse_args()
     main(args)

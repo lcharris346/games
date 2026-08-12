@@ -1170,6 +1170,7 @@ def main(args):
         if args.threshold == 0:
 
             args.threshold = VALUETABLE[args.addition_type]["  q"] * args.denom
+            print("INFO. Threshold =", args.threshold)
         
         
         for ii in range(args.iterations):
@@ -1204,7 +1205,7 @@ def main(args):
                     succ = True
                     break
                     
-            if succ == False and vp.credit >= 100 * vp.max_cost:
+            if succ == False and vp.credit >= args.credit:
                 succ_cnt += 1
 
             final_rtp_array[ii] = vp.total_rtp / (ctr)
@@ -1245,11 +1246,11 @@ def main(args):
 if __name__=="__main__":
     #args
     parser = argparse.ArgumentParser(description="vp")
-    parser.add_argument("-c", "--credit", type=float, default=1000, help="credit")
-    parser.add_argument("-d", "--denom", type=float, default=1.0, help="denom")
-    parser.add_argument("-g", "--activity", default="fhpw", help="activity:cl,sptrp,stp,dstp,sstk,pstk,php,ultx,fhpw,majm,drmcd")
-    parser.add_argument("-n", "--num_sets", type=int, default=3, help="num_sets")
-    parser.add_argument("-b", "--addition_type", default="ddb", help="addition_type:job,b,bd,db,ddb,tdb")
+    parser.add_argument("-c", "--credit", type=float, default=500, help="credit")
+    parser.add_argument("-d", "--denom", type=float, default=1, help="denom")
+    parser.add_argument("-g", "--activity", default="cl", help="activity:cl,sptrp,stp,dstp,sstk,pstk,php,ultx,fhpw,majm,drmcd")
+    parser.add_argument("-n", "--num_sets", type=int, default=1, help="num_sets")
+    parser.add_argument("-b", "--addition_type", default="tdb", help="addition_type:job,b,bd,db,ddb,tdb")
     parser.add_argument("-i", "--iterations", type=int, default=1, help="iterations")
     parser.add_argument("-a", "--automate", action="store_true", help="automate")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")

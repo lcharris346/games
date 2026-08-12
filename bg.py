@@ -43,7 +43,8 @@ CUBE_LTTR = {
    15: {"ltrs":"TOOTAM","coord":(3,3), "conn": []},
 }
 
-CUBES = list(CUBE_LTTR.keys())
+CUBES = list(range(0,16))
+random.shuffle(CUBES)
 
 COORD = [CUBE_LTTR[x]["coord"] for x in CUBES]
 LTTR =  [CUBE_LTTR[x]["ltrs"] for x in CUBES]
@@ -116,7 +117,7 @@ def graph_ltrs(ltrs):
 
     # 4. Automatically adjust padding between subplots
     plt.tight_layout()
-    fig.canvas.manager.window.geometry("160x160+1600+900")
+    fig.canvas.manager.window.geometry("160x160+-1800+900")
 
     # 6. show figure  non-blocking
     fig.set_facecolor('white')
@@ -215,7 +216,7 @@ class BG(object):
 
         self.shuffle_cubes()
         
-        while self.running == True and self.timer < 180:
+        while self.running == True and self.timer < 120:
 
             self.choose_words()
 
