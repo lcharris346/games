@@ -19,7 +19,7 @@ def get_work_time(break_taken, verbose):
     salary_per_day = 179000.0 / 365.23
 
     # Create a datetime object for 06:30 local time today
-    target = now.replace(hour=6, minute=30, second=0, microsecond=0)
+    target = now.replace(hour=7, minute=30, second=0, microsecond=0)
     diff = now - target
     hours_since = diff.total_seconds() / 3600 - break_taken/60
     gross_since = hours_since * 86.06
@@ -30,6 +30,8 @@ def get_work_time(break_taken, verbose):
         target2 = now.replace(year=2026, month=8, day=7)
         diff2 = now - target2
         days_since2 = diff2.days
+        while days_since2 >= 14:
+            days_since2 = days_since2 - 14
         salary_since2 = days_since2 * salary_per_day
         print(" pay-period   \t  %d days, $%4.2f,  $%4.2f" % (days_since2, salary_since2, salary_since2 * net2gross) )
 
@@ -45,25 +47,28 @@ def get_work_time(break_taken, verbose):
         days_since5 = diff5.days % 365.23
         months_since5 = days_since5 / 30
         days_since5b = days_since5 % 30
-        print("countdowns:\n 1-yr work anniversary  %d mo, %d days" % (months_since5, days_since5b) )
+        print("countdowns:\n 1-yr at work  %d months & %d days" % (months_since5, days_since5b) )
 
         target6 = now.replace(year=2030, month=6, day=1)
         diff6 = target6 - now
         years_since6 = diff6.days / 365.23
         days_since6 = diff6.days % 365.23
-        print(" child-support \t\t%d years & %d days" % (years_since6, days_since6) )
+        months_since6 = days_since6 / 30.44
+        print(" child-support \t%d years & %d months" % (years_since6, months_since6) )
 
         target7 = now.replace(year=2031, month=1, day=1)
         diff7 = target7 - now
         years_since7 = diff7.days / 365.23
         days_since7 = diff7.days % 365.23
-        print(" texas retirement \t%d years & %d days" % (years_since7, days_since7) )
+        months_since7 = days_since7 / 30.44
+        print(" TRS ret \t%d years & %d months" % (years_since7, months_since7) )
 
         target4 = now.replace(year=2041, month=8, day=1)
         diff4 = target4 - now
         years_since4 = diff4.days / 365.23
         days_since4 = diff4.days % 365.23
-        print(" social-security ret \t%d years & %d days" % (years_since4, days_since4) )
+        months_since4 = days_since4 / 30.44
+        print(" SS ret \t%d years & %d months" % (years_since4, months_since4) )
 
         
 

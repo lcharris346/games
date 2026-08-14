@@ -117,7 +117,7 @@ def graph_ltrs(ltrs):
 
     # 4. Automatically adjust padding between subplots
     plt.tight_layout()
-    fig.canvas.manager.window.geometry("160x160+-1800+900")
+    fig.canvas.manager.window.geometry("160x160+-1850+800")
 
     # 6. show figure  non-blocking
     fig.set_facecolor('white')
