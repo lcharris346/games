@@ -354,6 +354,7 @@ class Scr(object):
         multi = 1
 
         for sq in sel_squares:
+            
             if sq.ltr not in LTTR:
                 print("ERROR: ltr not in ltrs.", sq.ltr)
                 self.running = False
@@ -366,6 +367,7 @@ class Scr(object):
                 multi = multi * 3
                 sq.bonus = NONE
                 print("INFO. trp wrd!")
+
             if sq.bonus == "2":
                 value += LTTR_CNT_VAL[sq.ltr]["val"] * 2
                 sq.bonus = NONE
