@@ -20,7 +20,7 @@ def get_work_time(break_taken, verbose):
     salary_per_day = 179000.0 / 365.23
 
     # Create a datetime object for 06:30 local time today
-    target = now.replace(hour=7, minute=0, second=0, microsecond=0)
+    target = now.replace(hour=7, minute=30, second=0, microsecond=0)
     diff = now - target
     hours_since = diff.total_seconds() / 3600 - break_taken/60
     gross_since = hours_since * 86.06

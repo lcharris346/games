@@ -29,38 +29,49 @@ UPDATED_SET = {"numbers": None, "sorted_numbers": None, "elements": None, "prior
                   "name": None, "value": 0, "addition": 0, "total_value": 0}
 
 STACK_TYPE_HIST = {" rf": 0, " sf":  0,
-                     "  q":  0, "qak":  0, " qa": 0, "qlk": 0, " ql": 0, 
-                     " fh":   0, " fl":   0, "str":  0, "3ok":  0, "2pr":  0, "job": 5, " hc": 0}
+                   " q2":  0, "wrf":  0, "5ok": 0,
+                   "qak":  0, " qa": 0, "qlk": 0, " ql": 0, "  q":  0, 
+                   " fh":   0, " fl":   0, "str":  0, "3ok":  0, "2pr":  0, "job": 5, " hc": 0}
 
 VALUETABLE = {}
 VALUETABLE["job"] = {" rf": 4000, " sf":  250,
-                     "  q":  125, "qak":  125, " qa": 125, "qlk": 125, " ql": 125, 
+                     " q2":  0, "wrf":  0, "5ok": 0,
+                     "qak":  125, " qa": 125, "qlk": 125, " ql": 125, "  q":  125, 
                      " fh":   40, " fl":   25, "str":  20, "3ok":  15, "2pr":  10, "job": 5, " hc": 0}
 
 VALUETABLE["b"] =   {" rf": 4000, " sf":  250,
-                     "  q":  125, "qak":  400, " qa": 400, "qlk": 200, " ql": 200, 
+                     " q2":  0, "wrf":  0, "5ok": 0,
+                     "qak":  400, " qa": 400, "qlk": 200, " ql": 200, "  q":  125, 
                      " fh":   40, " fl":   25, "str":  20, "3ok":  15, "2pr":  10, "job": 5, " hc": 0}
 
-VALUETABLE["bd"] =   {" rf": 4000, " sf":  250,
-                     "  q":  400, "qak":  400, " qa": 400, "qlk": 400, " ql": 400, 
+VALUETABLE["bd"] =  {" rf": 4000, " sf":  250,
+                     " q2":  0, "wrf":  0, "5ok": 0,
+                     "qak":  400, " qa": 400, "qlk": 400, " ql": 400, "  q":  400, 
                      " fh":   40, " fl":   25, "str":  20, "3ok":  15, "2pr":  5, "job": 5, " hc": 0}
 
-VALUETABLE["db"] = { " rf": 4000, " sf":  250,
-                     "  q":  250, "qak":  800, " qa": 800, "qlk": 400, " ql": 400, 
+VALUETABLE["db"] =  {" rf": 4000, " sf":  250,
+                     " q2":  0, "wrf":  0, "5ok": 0,
+                     "qak":  800, " qa": 800, "qlk": 400, " ql": 400, "  q":  250, 
                      " fh":   40, " fl":   25, "str":  20, "3ok":  15, "2pr":   5, "job": 5, " hc": 0}
 
 VALUETABLE["ddb"] = {" rf": 4000, " sf":  250,
-                     "  q":  250, "qak": 2000, " qa": 800, "qlk": 800, " ql": 400, 
+                     " q2":  0, "wrf":  0, "5ok": 0,
+                     "qak": 2000, " qa": 800, "qlk": 800, " ql": 400, "  q":  250, 
                      " fh":   40, " fl":   25, "str":  20, "3ok":  15, "2pr":   5, "job": 5, " hc": 0}
 
 VALUETABLE["tdb"] = {" rf": 4000, " sf":  250,
-                     "  q":  250, "qak": 4000, " qa": 800, "qlk": 2000, " ql": 400, 
+                     " q2":  0, "wrf":  0, "5ok": 0,
+                     "qak": 4000, " qa": 800, "qlk": 2000, " ql": 400, "  q":  250, 
                      " fh":   40, " fl":   25, "str":  20, "3ok":  10, "2pr":   5, "job": 5, " hc": 0}
+
+VALUETABLE["dw"] = {" rf":  4000, " sf":  45, 
+                    " q2":  1000, "wrf":  125, "5ok": 75,
+                    "qak":   25, " qa":  25, "qlk":   25, " ql":   25, "  q":  25,
+                    " fh":   20, " fl":   15,  "str":  10, "3ok":   5, "2pr":   0, "job": 0, " hc": 0}
 
 MAX_COST = {"cl": 5, "sptrp": 6, "stp": 6, "dstp": 7, "sstk": 10, "pstk": 10,"ultx": 10,  "fhpw": 10, "majm": 10, "php": 10, "drmcd": 10 }
 
 CHOICES = ("", "1", "2", "3", "4", "5", "a")
-NUM_SETS = (3,5,10)
 
 KEYBOARD_CHOICES = {"c":1,"v":2,"b":3,"n":4,"m":5}
 KEYBOARD_CHOICES_KEYS = KEYBOARD_CHOICES.keys()
@@ -69,42 +80,53 @@ EXIT = ("q", "quit", "e", "exit")
 
 ADDITION = {}
 ADDITION["fhpw"] = {"values": [175]*10 + [1000]*5 + [225]*25 + [150]*8 + [300]*18 + [125]*8 + [2000] + [350]*27 + [100]*10 + [500]*9 + [275]*20}
-ADDITION["stp"] = {"values": [2]*81 + [3]*155 + [4]*62 +[5]*91 + [8]*34 + [10]*17}
+ADDITION["stp"]  = {"values": [2]*81 + [3]*155 + [4]*62 +[5]*91 + [8]*34 + [10]*17}
 ADDITION["sstk"] = {3:range(3,10),5:range(4,17),10:range(10,31)}
 ADDITION["pstk"] = {1:{2:1,3:2},3:{2:3,3:5}, 5:{2: 4, 3: 6}, 10: {2: 6, 3: 10}}
 
 ADDITION["ultx"] = {}
+ADDITION["ultx"][1] = {" rf": 2, " sf":  2,
+                      " q2":  1, "wrf":  12, "5ok": 10,
+                     "qak": 2, " qa": 2, "qlk": 2, " ql": 2, "  q":  2, 
+                     " fh":   12, " fl":   10, "str":  8, "3ok":  4, "2pr":   3, "job": 2, " hc": 1}
 ADDITION["ultx"][3] = {" rf": 2, " sf":  2,
-                     "  q":  2, "qak": 2, " qa": 2, "qlk": 2, " ql": 2, 
+                      " q2":  1, "wrf":  12, "5ok": 10,
+                     "qak": 2, " qa": 2, "qlk": 2, " ql": 2, "  q":  2, 
                      " fh":   12, " fl":   10, "str":  8, "3ok":  4, "2pr":   3, "job": 2, " hc": 1}
 
 ADDITION["ultx"][5] = {" rf": 2, " sf":  2,
-                     "  q":  3, "qak": 2, " qa": 2, "qlk": 2, " ql": 2, 
+                      " q2":  1, "wrf":  12, "5ok": 10,
+                     "qak": 2, " qa": 2, "qlk": 2, " ql": 2, "  q":  3, 
                      " fh":   12, " fl":   10, "str":  8, "3ok":  4, "2pr":   3, "job": 2, " hc": 1}
 
 ADDITION["ultx"][10] = {" rf": 4, " sf":  4,
-                     "  q":  3, "qak": 4, " qa": 4, "qlk": 4, " ql": 4, 
+                     " q2":  1, "wrf":  12, "5ok": 10,
+                     "qak": 4, " qa": 4, "qlk": 4, " ql": 4, "  q":  3, 
                      " fh":   12, " fl":   10, "str":  8, "3ok":  4, "2pr":   3, "job": 2, " hc": 1}
 
 ADDITION["majm"] = {
-                        "  q": [2]*49  + [4]*24   + [6]*19   + [8]*6 + [10]*2, 
+                        " q2": [2]*49  + [4]*24   + [6]*19   + [8]*6 + [10]*2,
+                        "wrf": [2]*49  + [4]*24   + [6]*19   + [8]*6 + [10]*2,
+                        "5ok": [2]*49  + [4]*24   + [6]*19   + [8]*6 + [10]*2,
                         "qak": [2]*49  + [4]*24   + [6]*19   + [8]*6 + [10]*2, 
                         " qa": [2]*49  + [4]*24   + [6]*19   + [8]*6 + [10]*2, 
                         "qlk": [2]*49  + [4]*24   + [6]*19   + [8]*6 + [10]*2, 
                         " ql": [2]*49  + [4]*24   + [6]*19   + [8]*6 + [10]*2, 
+                        "  q": [2]*49  + [4]*24   + [6]*19   + [8]*6 + [10]*2,
                         " fh": [2]*49  + [4]*24   + [7]*19   + [15]*6 + [80]*2, 
                         "3ok": [2]*2  + [5]*5   + [8]*8   + [20]*20 + [100]*100, 
                         "2pr": [2]*49 + [6]*24  + [10]*19 + [30]*6  + [100]*2, }
 ADDITION["sptrp"] = {}
-ADDITION["sptrp"]["job"] = {"qak":4, " qa":4, "qlk":4, " ql":4, "  q":4}
-ADDITION["sptrp"]["b"]   = {"qak":3, " qa":3, "qlk":3, " ql":3, "  q":3.2}
-ADDITION["sptrp"]["bd"] =  {"qak":2, " qa":2, "qlk":2, " ql":2, "  q":2}
+ADDITION["sptrp"]["job"] = {"qak":4,   " qa":4,   "qlk":4,   " ql":4,   "  q":4}
+ADDITION["sptrp"]["b"]   = {"qak":3,   " qa":3,   "qlk":3,   " ql":3,   "  q":3.2}
+ADDITION["sptrp"]["bd"] =  {"qak":2,   " qa":2,   "qlk":2,   " ql":2,   "  q":2}
 ADDITION["sptrp"]["db"] =  {"qak":2.5, " qa":2.5, "qlk":2.5, " ql":2.5, "  q":2}
-ADDITION["sptrp"]["ddb"] = {"qak":2, " qa":2, "qlk":2, " ql":2, "  q":2}
-ADDITION["sptrp"]["tdb"] = {"qak":1, " qa":2, "qlk":2, " ql":2, "  q":2}
+ADDITION["sptrp"]["ddb"] = {"qak":2,   " qa":2,   "qlk":2,   " ql":2,   "  q":2}
+ADDITION["sptrp"]["tdb"] = {"qak":1,   " qa":2,   "qlk":2,   " ql":2,   "  q":2}
+ADDITION["sptrp"]["dw"]  = {"qak":2,}
 
 ADDITION["php"] = { " rf":  1, " sf":  1,
-                    "  q":  1, "qak":  1, " qa":  1, "qlk":  1, " ql":  1, 
+                    "qak":  1, " qa":  1, "qlk":  1, " ql":  1, "  q":  1, 
                     " fh":  6, " fl":  5, "str":  4, "3ok":  3, "2pr":  2, "job": 1  }
 
 STR_DIFFS = ([1,1,1],[1,1,2],[1,2,1],[2,1,1])
@@ -368,9 +390,177 @@ def get_set_data(updated_set):
 
     return updated_set
 
+def get_set_type_dw(updated_set):
+
+    updated_set = get_set_data(updated_set)
+
+    orig_name = updated_set["name"]
+
+    orig_elements = updated_set["elements"]
+
+    max_value = 0
+
+    final_new_numbers = updated_set["sorted_numbers"]
+
+    new_numbers = [val for i, val in enumerate(updated_set["sorted_numbers"]) if updated_set["sorted_priorities"][i] != 2]
+
+    remaining_deck1 = [x for x in STACK if x not in new_numbers]
+
+    if len(new_numbers) == 4:
+
+        for t_num in remaining_deck1:
+
+            new_numbers2 = new_numbers + [t_num]
+
+            test_set = copy.deepcopy(UPDATED_SET)
+    
+            test_set["numbers"] = new_numbers2
+    
+            get_set_type(test_set)
+
+            value = VALUETABLE["dw"][test_set["name"]]
+
+            if test_set["name"] == "2pr":
+                value += 2
+            elif test_set["name"] == "job":
+                value += 1
+
+            if value > max_value:
+
+                max_value = value
+
+                final_new_numbers = new_numbers2
+
+                print("DEBUG: name", test_set["name"], "value", value)
+
+                if value >= 4000:
+
+                    break
+
+        updated_set["numbers"] = final_new_numbers
+        
+        updated_set = get_set_data(updated_set)
+
+        get_set_type(updated_set)
+
+    elif len(new_numbers) == 3:
+
+        for t_num in remaining_deck1:
+
+            new_numbers2 = new_numbers + [t_num]
+
+            remaining_deck2 = [x for x in STACK if x not in new_numbers2]
+
+            for t_num2 in remaining_deck2:
+
+                new_numbers3 = new_numbers2 + [t_num2]
+
+                test_set = copy.deepcopy(UPDATED_SET)
+        
+                test_set["numbers"] = new_numbers3
+        
+                get_set_type(test_set)
+
+                value = VALUETABLE["dw"][test_set["name"]]
+
+                if test_set["name"] == "2pr":
+                    value += 2
+                elif test_set["name"] == "job":
+                    value += 1
+
+                if value > max_value:
+
+                    max_value = value
+
+                    final_new_numbers = new_numbers3
+
+                    print("DEBUG: name", test_set["name"], "value", value)
+
+                    if value >= 4000:
+                    
+                        break
+
+        updated_set["numbers"] = final_new_numbers
+        
+        updated_set = get_set_data(updated_set)
+
+        get_set_type(updated_set)
+
+    elif len(new_numbers) == 2:
+    
+        for t_num in remaining_deck1:
+
+            new_numbers2 = new_numbers + [t_num]
+
+            remaining_deck2 = [x for x in STACK if x not in new_numbers2]
+
+            for t_num2 in remaining_deck2:
+
+                new_numbers3 = new_numbers2 + [t_num2]
+
+                remaining_deck3 = [x for x in STACK if x not in new_numbers3]
+                    
+                for t_num3 in remaining_deck3:
+    
+                    new_numbers4 = new_numbers3 + [t_num3]
+
+                    test_set = copy.deepcopy(UPDATED_SET)
+            
+                    test_set["numbers"] = new_numbers4
+            
+                    get_set_type(test_set)
+    
+                    value = VALUETABLE["dw"][test_set["name"]]
+
+                    if test_set["name"] == "2pr":
+                        value += 2
+                    elif test_set["name"] == "job":
+                        value += 1
+    
+                    if value > max_value:
+    
+                        max_value = value
+    
+                        final_new_numbers = new_numbers4
+    
+                        print("DEBUG: name", test_set["name"], "value", value)
+
+                        if value >= 4000:
+                                            
+                            break
+
+        updated_set["numbers"] = final_new_numbers
+        
+        updated_set = get_set_data(updated_set)
+
+        get_set_type(updated_set)
+
+    else:  # 4 or no 2's
+
+        get_set_type(updated_set)
+
+    # determine if name should be q2, 5ok, or wrf
+    if updated_set["sorted_priorities"][:4] == [2,2,2,2]:
+
+        updated_set["name"] = " q2"
+
+    elif orig_name in ("  q", "qlk", "qak") and updated_set["sorted_priorities"][0] == 2:
+
+        updated_set["name"] = "5ok"
+
+    elif updated_set["name"] == " rf" and orig_name != " rf":
+
+        updated_set["name"] = "wrf"
+
+    updated_set["elemens"] = orig_elements
+
+
+
 
 def get_set_type(updated_set):
-    updated_set = get_set_data(updated_set)
+
+    updated_set = get_set_data(updated_set) 
+
     name = " hc"
     value = 0
 
@@ -416,6 +606,8 @@ def get_set_type(updated_set):
     else:
         name = " hc"
 
+    updated_set["name"] = name
+
     return name
 
 ######################################## CLASSES  ########################################
@@ -440,15 +632,9 @@ class Vp(object):
         self.cost = self.max_cost
         self.max_win = 0
         self.set_num_sets(num_sets)
-        self.update_paytable()
         self.stack_type_hist = stack_type_hist
         my_print((self.activity, self.addition_type, self.num_sets, self.max_cost, self.credit))
         random.seed()
-
-    def update_paytable(self):
-        if self.denom > 0.5:
-            self.valuetable[" fh"] = 45
-
 
     def set_num_sets(self, num_sets):
         self.num_sets = num_sets
@@ -588,8 +774,6 @@ class Vp(object):
 
                     selection_numbers.append(dealt_set["sorted_numbers"][0])
 
-
-
         return selection_numbers
        
     def get_value_cl(self):
@@ -710,7 +894,7 @@ class Vp(object):
                 updated_priorities = [ PRIORITIES[x-1] for x in updated_numbers]
 
                 updated_set["numbers"] = held_numbers + updated_numbers
-                updated_set["name"] = get_set_type(updated_set)
+                get_set_type(updated_set)
                 updated_set["value"] = self.valuetable[updated_set["name"]]*self.multi
                 total_value += updated_set["value"]
 
@@ -752,7 +936,7 @@ class Vp(object):
                 updated_priorities = [ PRIORITIES[x-1] for x in updated_numbers]
 
                 updated_set["numbers"] = held_numbers + updated_numbers
-                updated_set["name"] = get_set_type(updated_set)
+                get_set_type(updated_set)
                 updated_set["value"] = self.valuetable[updated_set["name"]]
                 total_value += updated_set["value"]
 
@@ -798,7 +982,7 @@ class Vp(object):
                 updated_priorities = [ PRIORITIES[x-1] for x in updated_numbers]
 
                 updated_set["numbers"] = held_numbers + updated_numbers
-                updated_set["name"] = get_set_type(updated_set)
+                get_set_type(updated_set)
                 updated_set["value"] = self.valuetable[updated_set["name"]]
                 total_value += updated_set["value"]
 
@@ -862,7 +1046,8 @@ class Vp(object):
             #remaining_deck = [x for x in deck if x not in dealt_set["numbers"] ]  #deck[5:]
 
         dealt_set["elements"] = [STACK_ELEMENTS[x-1] for x in dealt_set["numbers"]]
-        dealt_set["name"] = get_set_type(dealt_set)
+        
+        get_set_type(dealt_set)
 
         #pre-update additions
         if self.cost == self.max_cost:
@@ -959,13 +1144,11 @@ class Vp(object):
                 held_numbers = [dealt_set["numbers"][x-1] for x in selection]
 
         
-        if set(held_numbers1) == set(held_numbers):
-
-            self.acc_ctr += 1
-
-        else:
-
-            print("mismatch!", held_numbers1, held_numbers)
+        if self.addition_type != "dw":
+            if set(held_numbers1) == set(held_numbers):
+                self.acc_ctr += 1
+            else:
+                print("mismatch!", held_numbers1, held_numbers)
 
         # update
         #os.system("cls")
@@ -985,7 +1168,10 @@ class Vp(object):
             # add values
             updated_set = copy.deepcopy(UPDATED_SET)
             updated_set["numbers"] = held_numbers + random.sample(remaining_deck, num_elements2update)
-            updated_set["name"] = get_set_type(updated_set)
+            if self.addition_type == "dw":
+                get_set_type_dw(updated_set)
+            else:
+                get_set_type(updated_set)
             updated_set["value"] = self.valuetable[updated_set["name"]]
 
             # update counts
@@ -1137,18 +1323,25 @@ class Vp(object):
 # Tests
 
 def test(vp):
-
     deck = copy.deepcopy(STACK)
     random.shuffle(deck)
     dealt_set = copy.deepcopy(UPDATED_SET)
-    dealt_set_4_elements = input("Enter 4 Elements:").rstrip("\n").split(",")
-    dealt_set_4_numbers = [ STACK_ELEMENTS_DICT[x] for x in dealt_set_4_elements]
-    remaining_deck1 = [x for x in deck if x not in dealt_set_4_numbers]
-    drmcd_number = get_5th_element(dealt_set_4_numbers, remaining_deck1)
-    print("DEBUG: 5th-element", STACK_ELEMENTS[drmcd_number-1])
+    user_input = input("Enter 4 Elements:").rstrip("\n").split(",")
+    user_numbers = [ STACK_ELEMENTS_DICT[x] for x in user_input]
+    dealt_set["numbers"] = user_numbers
+    get_set_type_dw(dealt_set)
+    print(dealt_set)
+    
+    
 
 # Main Function
 def main(args):
+    # check args
+    if args.addition_type == "dw" and args.activity not in ("cl", "stp", "dstp", "sptrp"):
+        print("ERROR. Invalid activity for dw", args.activity)
+        return
+
+    # tests
     if args.test == True:
 
         vp = Vp(args.activity, args.addition_type, args.num_sets, args.credit, args.denom, args.automate, args.verbose)
@@ -1168,8 +1361,10 @@ def main(args):
         max_ctr = 720 # Divide by 12 to get ave min
 
         if args.threshold == 0:
-
-            args.threshold = VALUETABLE[args.addition_type]["  q"] * args.denom
+            if args.addition_type == "dw":
+                args.threshold = VALUETABLE[args.addition_type]["wrf"] * args.denom
+            else:
+                args.threshold = VALUETABLE[args.addition_type]["  q"] * args.denom
             print("INFO. Threshold =", args.threshold)
         
         
@@ -1249,8 +1444,8 @@ if __name__=="__main__":
     parser.add_argument("-c", "--credit", type=float, default=500, help="credit")
     parser.add_argument("-d", "--denom", type=float, default=1, help="denom")
     parser.add_argument("-g", "--activity", default="cl", help="activity:cl,sptrp,stp,dstp,sstk,pstk,php,ultx,fhpw,majm,drmcd")
-    parser.add_argument("-n", "--num_sets", type=int, default=1, help="num_sets")
-    parser.add_argument("-b", "--addition_type", default="tdb", help="addition_type:job,b,bd,db,ddb,tdb")
+    parser.add_argument("-n", "--num_sets", type=int, default=1, help="num_sets:1,3,5,10")
+    parser.add_argument("-b", "--addition_type", default="tdb", help="addition_type:job,b,bd,db,ddb,tdb,dw")
     parser.add_argument("-i", "--iterations", type=int, default=1, help="iterations")
     parser.add_argument("-a", "--automate", action="store_true", help="automate")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
