@@ -396,69 +396,40 @@ def get_set_type_dw(updated_set):
 
     orig_name = updated_set["name"]
 
-    orig_elements = updated_set["elements"]
-
     max_value = 0
 
     final_new_numbers = updated_set["sorted_numbers"]
 
+    updated_set["orig_elements"] = copy.deepcopy(updated_set["elements"])
+
+    updated_set["orig_sorted_elements"] = copy.deepcopy(updated_set["sorted_elements"])
+
+    updated_set["orig_sorted_numbers"] = copy.deepcopy(updated_set["sorted_numbers"])
+
     new_numbers = [val for i, val in enumerate(updated_set["sorted_numbers"]) if updated_set["sorted_priorities"][i] != 2]
+
+    sorted_priorities_non2 = [val for i, val in enumerate(updated_set["priorities_diffs"]) if updated_set["sorted_priorities"][i] != 2]
 
     remaining_deck1 = [x for x in STACK if x not in new_numbers]
 
+    name_5ok = False
+
     if len(new_numbers) == 4:
 
-        for t_num in remaining_deck1:
+        if sum(sorted_priorities_non2) == 0:
 
-            new_numbers2 = new_numbers + [t_num]
+            name_5ok = True
 
-            test_set = copy.deepcopy(UPDATED_SET)
-    
-            test_set["numbers"] = new_numbers2
-    
-            get_set_type(test_set)
+        else:
 
-            value = VALUETABLE["dw"][test_set["name"]]
+            for t_num in remaining_deck1:
 
-            if test_set["name"] == "2pr":
-                value += 2
-            elif test_set["name"] == "job":
-                value += 1
-
-            if value > max_value:
-
-                max_value = value
-
-                final_new_numbers = new_numbers2
-
-                print("DEBUG: name", test_set["name"], "value", value)
-
-                if value >= 4000:
-
-                    break
-
-        updated_set["numbers"] = final_new_numbers
-        
-        updated_set = get_set_data(updated_set)
-
-        get_set_type(updated_set)
-
-    elif len(new_numbers) == 3:
-
-        for t_num in remaining_deck1:
-
-            new_numbers2 = new_numbers + [t_num]
-
-            remaining_deck2 = [x for x in STACK if x not in new_numbers2]
-
-            for t_num2 in remaining_deck2:
-
-                new_numbers3 = new_numbers2 + [t_num2]
+                new_numbers2 = new_numbers + [t_num]
 
                 test_set = copy.deepcopy(UPDATED_SET)
-        
-                test_set["numbers"] = new_numbers3
-        
+    
+                test_set["numbers"] = new_numbers2
+    
                 get_set_type(test_set)
 
                 value = VALUETABLE["dw"][test_set["name"]]
@@ -472,12 +443,12 @@ def get_set_type_dw(updated_set):
 
                     max_value = value
 
-                    final_new_numbers = new_numbers3
+                    final_new_numbers = new_numbers2
 
-                    print("DEBUG: name", test_set["name"], "value", value)
+                    #print("DEBUG: name", test_set["name"], "value", value)
 
                     if value >= 4000:
-                    
+
                         break
 
         updated_set["numbers"] = final_new_numbers
@@ -486,48 +457,103 @@ def get_set_type_dw(updated_set):
 
         get_set_type(updated_set)
 
-    elif len(new_numbers) == 2:
-    
-        for t_num in remaining_deck1:
+    elif len(new_numbers) == 3:
 
-            new_numbers2 = new_numbers + [t_num]
+        if sum(sorted_priorities_non2) == 0:
 
-            remaining_deck2 = [x for x in STACK if x not in new_numbers2]
+            name_5ok = True
 
-            for t_num2 in remaining_deck2:
+        else:
 
-                new_numbers3 = new_numbers2 + [t_num2]
+            for t_num in remaining_deck1:
 
-                remaining_deck3 = [x for x in STACK if x not in new_numbers3]
-                    
-                for t_num3 in remaining_deck3:
-    
-                    new_numbers4 = new_numbers3 + [t_num3]
+                new_numbers2 = new_numbers + [t_num]
+
+                remaining_deck2 = [x for x in STACK if x not in new_numbers2]
+
+                for t_num2 in remaining_deck2:
+
+                    new_numbers3 = new_numbers2 + [t_num2]
 
                     test_set = copy.deepcopy(UPDATED_SET)
-            
-                    test_set["numbers"] = new_numbers4
-            
+        
+                    test_set["numbers"] = new_numbers3
+        
                     get_set_type(test_set)
-    
+
                     value = VALUETABLE["dw"][test_set["name"]]
 
                     if test_set["name"] == "2pr":
                         value += 2
                     elif test_set["name"] == "job":
                         value += 1
-    
+
                     if value > max_value:
-    
+
                         max_value = value
-    
-                        final_new_numbers = new_numbers4
-    
+
+                        final_new_numbers = new_numbers3
+
                         print("DEBUG: name", test_set["name"], "value", value)
 
                         if value >= 4000:
-                                            
+                    
                             break
+
+        updated_set["numbers"] = final_new_numbers
+        
+        updated_set = get_set_data(updated_set)
+
+        get_set_type(updated_set)
+
+    elif len(new_numbers) == 2:
+
+        if sum(sorted_priorities_non2) == 0:
+
+            name_5ok = True
+
+        else:
+    
+            for t_num in remaining_deck1:
+
+                new_numbers2 = new_numbers + [t_num]
+
+                remaining_deck2 = [x for x in STACK if x not in new_numbers2]
+
+                for t_num2 in remaining_deck2:
+
+                    new_numbers3 = new_numbers2 + [t_num2]
+
+                    remaining_deck3 = [x for x in STACK if x not in new_numbers3]
+                    
+                    for t_num3 in remaining_deck3:
+    
+                        new_numbers4 = new_numbers3 + [t_num3]
+
+                        test_set = copy.deepcopy(UPDATED_SET)
+            
+                        test_set["numbers"] = new_numbers4
+            
+                        get_set_type(test_set)
+    
+                        value = VALUETABLE["dw"][test_set["name"]]
+
+                        if test_set["name"] == "2pr":
+                            value += 2
+                        elif test_set["name"] == "job":
+                            value += 1
+    
+                        if value > max_value:
+    
+                            max_value = value
+    
+                            final_new_numbers = new_numbers4
+    
+                            print("DEBUG: name", test_set["name"], "value", value)
+
+                            if value >= 4000:
+                                            
+                                break
 
         updated_set["numbers"] = final_new_numbers
         
@@ -544,15 +570,15 @@ def get_set_type_dw(updated_set):
 
         updated_set["name"] = " q2"
 
-    elif orig_name in ("  q", "qlk", "qak") and updated_set["sorted_priorities"][0] == 2:
-
-        updated_set["name"] = "5ok"
-
     elif updated_set["name"] == " rf" and orig_name != " rf":
 
         updated_set["name"] = "wrf"
 
-    updated_set["elemens"] = orig_elements
+    elif name_5ok == True:
+
+        updated_set["name"] = "5ok"
+
+    updated_set["elements"] = updated_set["orig_elements"]
 
 
 
@@ -648,6 +674,59 @@ class Vp(object):
         self.max_cost = self.denom * self.num_sets * MAX_COST[self.activity]
         self.cost = self.max_cost
 
+    def algorithm1_dw(self, dealt_set):
+
+        selection_numbers = copy.deepcopy(dealt_set["sorted_numbers"])
+
+        sorted_numbers_2s = [x for x in dealt_set["sorted_numbers"] if PRIORITIES[x-1] == 2]
+
+        num_2s = len(sorted_numbers_2s)
+
+        sorted_numbers_non2s = dealt_set["sorted_numbers"][num_2s:]
+
+        num_non2s = 5 - num_2s
+
+        #print("DEBUG1", dealt_set["priorities_diffs"][num_2s:])
+
+        if num_2s == 0 or num_2s > 3 or dealt_set["priorities_diffs"][num_2s:] in ( [0],[0,0],[1],[1,1] ):
+
+            selection_numbers = self.algorithm1(dealt_set)
+
+        else:
+
+            selection_numbers = sorted_numbers_2s
+
+            if num_2s == 1:
+
+                if dealt_set["priorities_diffs"][1:3] in ([0,],[0,0], [1,],[1,1]):
+
+                    selection_numbers += sorted_numbers_non2s[0:2]
+
+                elif dealt_set["priorities_diffs"][2:4] in ([0,],[0,0], [1,],[1,1]):
+
+                    selection_numbers += sorted_numbers_non2s[1:3]
+
+                elif dealt_set["priorities_diffs"][3:5] in ([0,],[0,0], [1,],[1,1]):
+
+                    selection_numbers += sorted_numbers_non2s[2:4]
+
+            elif num_2s == 2:
+
+                if dealt_set["priorities_diffs"][1:3] in ([0,],[0,0], [1,],[1,1]):
+
+                    selection_numbers += sorted_numbers_non2s[0:2]
+
+                elif dealt_set["priorities_diffs"][2:4] in ([0,],[0,0], [1,],[1,1]):
+
+                    selection_numbers += sorted_numbers_non2s[1:3]
+
+            elif num_2s == 3:
+
+                pass
+
+
+        return selection_numbers
+        
     def algorithm1(self, dealt_set):
 
         selection_numbers = []
@@ -1082,7 +1161,10 @@ class Vp(object):
         held_numbers = []
 
         # algorithm
-        held_numbers1 = self.algorithm1(dealt_set)
+        if self.addition_type == "dw":
+            held_numbers1 = self.algorithm1_dw(dealt_set)
+        else:
+            held_numbers1 = self.algorithm1(dealt_set)
             #time.sleep(0.5)
 
         # user input
@@ -1103,7 +1185,11 @@ class Vp(object):
 
                 if x == "a":
 
-                    held_numbers = self.algorithm1(dealt_set)
+                    if self.addition_type == "dw":
+                        held_numbers = self.algorithm1_dw(dealt_set)
+                    else:
+                        held_numbers = self.algorithm1(dealt_set)
+
                     break
 
                 if x in KEYBOARD_CHOICES_KEYS:
@@ -1326,11 +1412,14 @@ def test(vp):
     deck = copy.deepcopy(STACK)
     random.shuffle(deck)
     dealt_set = copy.deepcopy(UPDATED_SET)
-    user_input = input("Enter 4 Elements:").rstrip("\n").split(",")
+    user_input = input("Enter 5 Elements:").rstrip("\n").split(",")
     user_numbers = [ STACK_ELEMENTS_DICT[x] for x in user_input]
     dealt_set["numbers"] = user_numbers
-    get_set_type_dw(dealt_set)
-    print(dealt_set)
+    get_set_type(dealt_set)
+    print("DEBUG. dealt_set", dealt_set)
+    selected_numbers = vp.algorithm1_dw(dealt_set)
+    selected_elements = [STACK_ELEMENTS[num-1] for num in selected_numbers]
+    print(selected_elements)
     
     
 
