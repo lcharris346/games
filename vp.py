@@ -128,6 +128,7 @@ ADDITION["sptrp"]["tdb"] = {"qak":1,   " qa":2,   "qlk":2,   " ql":2,   "  q":2}
 ADDITION["sptrp"]["dw"]  = {"qak":2,}
 
 ADDITION["php"] = { " rf":  1, " sf":  1,
+                    " q2":  1, "wrf":  1, "5ok":  1,
                     "qak":  1, " qa":  1, "qlk":  1, " ql":  1, "  q":  1, 
                     " fh":  6, " fl":  5, "str":  4, "3ok":  3, "2pr":  2, "job": 1  }
 
@@ -1655,7 +1656,7 @@ def test(vp):
 # Main Function
 def main(args):
     # check args
-    if args.addition_type == "dw" and args.activity not in ("cl", "stp", "dstp", "sptrp"):
+    if args.addition_type == "dw" and args.activity not in ("cl", "stp", "dstp", "sptrp", "ultx", "php", "majm"):
         print("ERROR. Invalid activity for dw", args.activity)
         return
 
