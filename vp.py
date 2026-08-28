@@ -679,22 +679,15 @@ class Vp(object):
         selection_numbers = copy.deepcopy(dealt_set["sorted_numbers"])
 
         sorted_numbers_2s = [x for x in dealt_set["sorted_numbers"] if PRIORITIES[x-1] == 2]
-
         num_2s = len(sorted_numbers_2s)
-
         sorted_numbers_non2s = dealt_set["sorted_numbers"][num_2s:]
-
-        num_non2s = 5 - num_2s
-
-        #print("DEBUG1", dealt_set["priorities_diffs"][num_2s:])
-
         diffs_non2s = dealt_set["priorities_diffs"][num_2s:]
 
         if num_2s == 0:
 
             selection_numbers = self.algorithm1(dealt_set)
 
-        elif num_2s > 3 or diffs_non2s in ([1,1],[1],[0,0],[0]):
+        elif num_2s > 3 or diffs_non2s in ([1,1,1],[1,1],[1],[0,0,0],[0,0],[0]):
 
             selection_numbers = dealt_set["sorted_numbers"]
 
@@ -712,17 +705,25 @@ class Vp(object):
 
                     selection_numbers += sorted_numbers_non2s[1:4]
 
-                elif dealt_set["priorities_diffs"][3:5] in ([0,0], [1,1]):
+                elif dealt_set["priorities_diffs"][1:2] == [0]:
                 
-                    selection_numbers += sorted_numbers_non2s[2:5]
+                    selection_numbers += sorted_numbers_non2s[0:2]
+
+                elif dealt_set["priorities_diffs"][2:3] == [0]:
+
+                    selection_numbers += sorted_numbers_non2s[1:3]
+
+                elif dealt_set["priorities_diffs"][3:4] == [0]:
+                
+                    selection_numbers += sorted_numbers_non2s[2:4]
 
             elif num_2s == 2:
 
-                if dealt_set["priorities_diffs"][2:3] in ([0,], [1,],):
+                if dealt_set["priorities_diffs"][2:3] in ([0], [1]):
 
                     selection_numbers += sorted_numbers_non2s[0:2]
 
-                elif dealt_set["priorities_diffs"][3:4] in ([0,], [1,]):
+                elif dealt_set["priorities_diffs"][3:4] in ([0], [1]):
 
                     selection_numbers += sorted_numbers_non2s[1:3]
 
