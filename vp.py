@@ -1,6 +1,7 @@
 #!C:\Program Files\Python312\python
 from ast import Add
 from inspect import stack
+from multiprocessing.pool import INIT
 import random
 import copy
 import argparse
@@ -10,6 +11,7 @@ import os
 import sys
 import matplotlib.pyplot as plt
 import statistics
+from itertools import combinations
 #os.system('cls' if os.name == 'nt' else 'clear')
 # Constants         1    2    3    4    5    6    7    8    9   10   11   12   13          
 STACK_ELEMENTS=(    "2s","3s","4s","5s","6s","7s","8s","9s","Ts","Js","Qs","Ks","As",   
@@ -134,6 +136,13 @@ STR_DIFFS = ([1,1,1],[1,1,2],[1,2,1],[2,1,1])
 DENOMS = (0.1, 0.25,0.5,1.0,2)
 
 BUILD_OUT = open("sample.txt").readlines()
+
+RF_4 = combos = list(combinations([9,10,11,12,13], 4)) + list(combinations([22,23,24,25,26], 4)) + \
+                list(combinations([35,36,37,38,39], 4)) + list(combinations([48,49,50,51,52], 4))
+RF_3 = combos = list(combinations([9,10,11,12,13], 3)) + list(combinations([22,23,24,25,26], 3)) + \
+                list(combinations([35,36,37,38,39], 3)) + list(combinations([48,49,50,51,52], 3))
+RF_2 = combos = list(combinations([9,10,11,12,13], 2)) + list(combinations([22,23,24,25,26], 2)) + \
+                list(combinations([35,36,37,38,39], 2)) + list(combinations([48,49,50,51,52], 2))
 
 # Functions
 def my_decorator(func):
@@ -494,7 +503,7 @@ def get_set_type_dw(updated_set):
 
                         final_new_numbers = new_numbers3
 
-                        print("DEBUG: name", test_set["name"], "value", value)
+                        #print("DEBUG: name", test_set["name"], "value", value)
 
                         if value >= 4000:
                     
@@ -549,7 +558,7 @@ def get_set_type_dw(updated_set):
     
                             final_new_numbers = new_numbers4
     
-                            print("DEBUG: name", test_set["name"], "value", value)
+                            #print("DEBUG: name", test_set["name"], "value", value)
 
                             if value >= 4000:
                                             
@@ -681,21 +690,188 @@ class Vp(object):
         sorted_numbers_2s = [x for x in dealt_set["sorted_numbers"] if PRIORITIES[x-1] == 2]
         num_2s = len(sorted_numbers_2s)
         sorted_numbers_non2s = dealt_set["sorted_numbers"][num_2s:]
+        sorted_priorities_non2s = dealt_set["sorted_priorities"][num_2s:]
         diffs_non2s = dealt_set["priorities_diffs"][num_2s:]
+        cat_non2s = [CATEGORIES[x-1] for x in sorted_numbers_non2s]
+        equal_cat_non2s = all([x == cat_non2s[0] for x in cat_non2s])
 
-        if num_2s == 0:
 
-            selection_numbers = self.algorithm1(dealt_set)
+        # no 2s
+        if num_2s == 0:  
 
-        elif num_2s > 3 or diffs_non2s in ([1,1,1],[1,1],[1],[0,0,0],[0,0],[0]):
+            # rf, q2, wrf, 5ok, q, fh, fl, str, 3ok
+            if  dealt_set["name"] not in ("2pr", "job", " hc"): 
+
+                selection_numbers = self.algorithm1(dealt_set)
+
+            # job or hc
+            else:  
+
+                selection_numbers = []
+
+                numbers_selected = False
+
+                dealt_set["sorted_categories"]
+                dealt_set["sorted_numbers_categories"]
+
+                max_cat_numbers = []
+                cat_numbers = []
+
+                for i, cat in enumerate(dealt_set["sorted_categories"][:-1]):
+
+                    if dealt_set["sorted_categories"][i] == dealt_set["sorted_categories"][i+1]:
+
+                        if dealt_set["sorted_numbers_categories"][i] not in cat_numbers:
+
+                            cat_numbers.append(dealt_set["sorted_numbers_categories"][i])
+
+                        if dealt_set["sorted_numbers_categories"][i+1] not in cat_numbers:
+
+                            cat_numbers.append(dealt_set["sorted_numbers_categories"][i+1])
+
+                    else:
+
+                        if len(cat_numbers) > len(max_cat_numbers):
+
+                            max_cat_numbers = cat_numbers
+
+                        cat_numbers = []
+
+                    #print("DEBUG.cat_numbers", cat_numbers, "max_cat_numbers", max_cat_numbers)
+
+                
+
+                if len(cat_numbers) > len(max_cat_numbers):
+
+                    max_cat_numbers = copy.deepcopy(cat_numbers)
+
+                max_cat_numbers = list(set(max_cat_numbers))
+                        
+                size_max_cat_numbers = len(max_cat_numbers)
+
+                test_cat_prio_numbers = [PRIORITIES[x-1] for x in max_cat_numbers]
+
+                qual_str_fl = False
+
+                if max(test_cat_prio_numbers) - min(test_cat_prio_numbers) < 5 and size_max_cat_numbers > 1:
+
+                    qual_str_fl = True
+
+                #print("DEBUG.max_cat_numbers", max_cat_numbers, "qual_str_fl", qual_str_fl)
+
+
+                # 4 to a Royal Flush: Keep all four cards.
+                for stack4 in RF_4:
+                    if set(stack4).issubset(set(sorted_numbers_non2s)):
+                        selection_numbers = stack4
+                        numbers_selected = True
+                        break
+                
+                # 4 to a Straight Flush: Keep all four cards.
+                if not numbers_selected and size_max_cat_numbers == 4 and qual_str_fl == True: 
+                    numbers_selected = True
+                    selection_numbers = max_cat_numbers
+                    
+                # 3 to a Royal Flush: Keep all three cards.
+                if not numbers_selected: 
+                    for stack3 in RF_3:
+                        if set(stack3).issubset(set(sorted_numbers_non2s)):
+                            selection_numbers = stack3
+                            numbers_selected = True
+                            break
+                # 4 to a Flush: Keep all four cards.
+                if not numbers_selected and size_max_cat_numbers == 4: 
+                    numbers_selected = True
+                    selection_numbers = max_cat_numbers
+
+                # Two Pair: Hold both pairs (this is a placeholder hand to easily catch a Full House).
+                if not numbers_selected and dealt_set["name"] == "2pr": 
+                    numbers_selected = True
+                    selection_numbers = self.algorithm1(dealt_set)
+
+                # 3 to a Straight Flush (Consecutive): Keep 3 consecutive cards, 6-high or higher (e.g., 6-7-8).
+                if not numbers_selected and size_max_cat_numbers == 3 and (max(test_cat_prio_numbers) - min(test_cat_prio_numbers) < 3): 
+                    numbers_selected = True
+                    selection_numbers = max_cat_numbers
+
+                # One Pair: Hold the single pair and discard the remaining 3 cards. Note: Unlike Jacks or Better, pairs of Aces or Kings have no extra value over a pair of 3s.
+                if not numbers_selected and dealt_set["name"] == "job":
+                    numbers_selected = True
+                    selection_numbers = self.algorithm1(dealt_set)
+
+                # 4 to an Open-Ended Straight: Keep 4 consecutive cards, 7-high up to King-high (e.g., 7-8-9-10 up to 10-J-Q-K).
+                if not numbers_selected: 
+
+                    if sorted_priorities_non2s[3] - sorted_priorities_non2s[0] < 4:
+                        numbers_selected = True
+                        selection_numbers = sorted_numbers_non2s[:-1]
+
+                    elif sorted_priorities_non2s[4] - sorted_priorities_non2s[1] < 4:
+                        numbers_selected = True
+                        selection_numbers = sorted_numbers_non2s[1:]
+
+                # 3 to a Straight Flush (With 1 Gap): Keep 3 cards with one gap, 7-high or higher (e.g., 7-8-10 or 7-9-10).
+                if not numbers_selected and size_max_cat_numbers == 3 and (max(test_cat_prio_numbers) - min(test_cat_prio_numbers) < 4): 
+                    numbers_selected = True
+                    selection_numbers = max_cat_numbers
+
+                # 2 to a Royal Flush (Suited J-Q): Keep just the Jack and Queen of the same suit.
+                if not numbers_selected: 
+                    for stack2 in RF_2:
+                        if set(stack2).issubset(set(sorted_numbers_non2s)):
+                            prio = [PRIORITIES[x-1] for x in stack2]
+                            if prio == [11,12]:
+                                selection_numbers = stack2
+                                numbers_selected = True
+                                break
+                # 3 to a Straight Flush (With 2 Gaps): Keep 3 cards with two gaps, 7-high or higher (e.g., 7-9-J or 8-9-Q).
+                if not numbers_selected and size_max_cat_numbers == 3 and (max(test_cat_prio_numbers) - min(test_cat_prio_numbers) < 5): 
+                    numbers_selected = True
+                    selection_numbers = max_cat_numbers
+
+                # 4 to an Inside Straight: Keep 4 cards with one gap, 6-high or higher (e.g., 6-7-9-10).
+                if not numbers_selected: 
+                    if sorted_priorities_non2s[3] - sorted_priorities_non2s[0] < 5:
+                        numbers_selected = True
+                        selection_numbers = sorted_numbers_non2s[:-1]
+
+                    elif sorted_priorities_non2s[4] - sorted_priorities_non2s[1] < 5:
+                        numbers_selected = True
+                        selection_numbers = sorted_numbers_non2s[1:]
+
+                # 2 to a Royal Flush (Suited 10-J, 10-Q, 10-K, J-K, or Q-K): Keep both high suited cards.
+                if not numbers_selected and size_max_cat_numbers == 2 and (max(test_cat_prio_numbers) - min(test_cat_prio_numbers) < 5): 
+                    numbers_selected = True
+                    for stack2 in RF_2:
+                        if set(stack2).issubset(set(sorted_numbers_non2s)):
+                            prio = [PRIORITIES[x-1] for x in stack2]
+                            if prio in ([10,11],[10,12],[10,13],[11,12],[11,13],[12,13]):
+                                selection_numbers = stack2
+                                numbers_selected = True
+                                break
+
+                
+
+        # q2
+        elif num_2s > 3:  
+
+            selection_numbers = dealt_set["sorted_numbers"]
+
+        # str w 2s  
+        elif num_2s < 3 and diffs_non2s in ([1,1,1],[1,1],[0,0,0],[0,0]):  
+
+            selection_numbers = dealt_set["sorted_numbers"]
+
+        # fl w 2s
+        elif num_2s < 3 and equal_cat_non2s:   
 
             selection_numbers = dealt_set["sorted_numbers"]
 
         else:
 
-            selection_numbers = sorted_numbers_2s
-
             if num_2s == 1:
+
+                selection_numbers = sorted_numbers_2s
 
                 if dealt_set["priorities_diffs"][1:3] in ([0,0],[1,1]):
 
@@ -717,8 +893,28 @@ class Vp(object):
                 
                     selection_numbers += sorted_numbers_non2s[2:4]
 
+                # 3 to fl
+                if cat_non2s[0] == cat_non2s[1] and cat_non2s[0] == cat_non2s[2]:
+
+                    selection_numbers += [sorted_numbers_non2s[0] , sorted_numbers_non2s[1], sorted_numbers_non2s[2]]
+
+                elif cat_non2s[0] == cat_non2s[1] and cat_non2s[0] == cat_non2s[3]:
+
+                    selection_numbers += [sorted_numbers_non2s[0] , sorted_numbers_non2s[1], sorted_numbers_non2s[3]]
+
+                elif cat_non2s[0] == cat_non2s[2] and cat_non2s[0] == cat_non2s[3]:
+
+                    selection_numbers += [sorted_numbers_non2s[0] , sorted_numbers_non2s[2], sorted_numbers_non2s[3]]
+
+                elif cat_non2s[1] == cat_non2s[2] and cat_non2s[1] == cat_non2s[3]:
+
+                    selection_numbers += [sorted_numbers_non2s[1] , sorted_numbers_non2s[2], sorted_numbers_non2s[3]]
+
             elif num_2s == 2:
 
+                selection_numbers = sorted_numbers_2s
+
+                #  2 to str
                 if dealt_set["priorities_diffs"][2:3] in ([0], [1]):
 
                     selection_numbers += sorted_numbers_non2s[0:2]
@@ -727,10 +923,36 @@ class Vp(object):
 
                     selection_numbers += sorted_numbers_non2s[1:3]
 
+                # 2 to fl
+                if cat_non2s[0] == cat_non2s[1]:
+
+                    selection_numbers += [sorted_numbers_non2s[0] , sorted_numbers_non2s[1]]
+
+                elif cat_non2s[0] == cat_non2s[2]:
+
+                    selection_numbers += [sorted_numbers_non2s[0] , sorted_numbers_non2s[2]]
+
+                elif cat_non2s[1] == cat_non2s[2]:
+
+                    selection_numbers += [sorted_numbers_non2s[1], sorted_numbers_non2s[2]]
+
             elif num_2s == 3:
 
-                pass
+                # wrf
+                if equal_cat_non2s == True and dealt_set["sorted_priorities"][3] > 9:
+                    
+                    selection_numbers = dealt_set["sorted_numbers"]
 
+                # 5ok
+                elif diffs_non2s == [0]:
+
+                    selection_numbers = dealt_set["sorted_numbers"]
+
+                else:
+
+                    selection_numbers = sorted_numbers_2s
+
+        selection_numbers = list(set(selection_numbers))
 
         return selection_numbers
         
@@ -1458,7 +1680,7 @@ def main(args):
 
         if args.threshold == 0:
             if args.addition_type == "dw":
-                args.threshold = VALUETABLE[args.addition_type]["wrf"] * args.denom
+                args.threshold = VALUETABLE[args.addition_type]["5ok"] * args.denom
             else:
                 args.threshold = VALUETABLE[args.addition_type]["  q"] * args.denom
             print("INFO. Threshold =", args.threshold)
