@@ -688,9 +688,15 @@ class Vp(object):
 
         #print("DEBUG1", dealt_set["priorities_diffs"][num_2s:])
 
-        if num_2s == 0 or num_2s > 3 or dealt_set["priorities_diffs"][num_2s:] in ( [0],[0,0],[1],[1,1] ):
+        diffs_non2s = dealt_set["priorities_diffs"][num_2s:]
+
+        if num_2s == 0:
 
             selection_numbers = self.algorithm1(dealt_set)
+
+        elif num_2s > 3 or diffs_non2s in ([1,1],[1],[0,0],[0]):
+
+            selection_numbers = dealt_set["sorted_numbers"]
 
         else:
 
@@ -698,25 +704,25 @@ class Vp(object):
 
             if num_2s == 1:
 
-                if dealt_set["priorities_diffs"][1:3] in ([0,],[0,0], [1,],[1,1]):
+                if dealt_set["priorities_diffs"][1:3] in ([0,0],[1,1]):
 
-                    selection_numbers += sorted_numbers_non2s[0:2]
+                    selection_numbers += sorted_numbers_non2s[0:3]
 
-                elif dealt_set["priorities_diffs"][2:4] in ([0,],[0,0], [1,],[1,1]):
+                elif dealt_set["priorities_diffs"][2:4] in ([0,0], [1,1]):
 
-                    selection_numbers += sorted_numbers_non2s[1:3]
+                    selection_numbers += sorted_numbers_non2s[1:4]
 
-                elif dealt_set["priorities_diffs"][3:5] in ([0,],[0,0], [1,],[1,1]):
-
-                    selection_numbers += sorted_numbers_non2s[2:4]
+                elif dealt_set["priorities_diffs"][3:5] in ([0,0], [1,1]):
+                
+                    selection_numbers += sorted_numbers_non2s[2:5]
 
             elif num_2s == 2:
 
-                if dealt_set["priorities_diffs"][1:3] in ([0,],[0,0], [1,],[1,1]):
+                if dealt_set["priorities_diffs"][2:3] in ([0,], [1,],):
 
                     selection_numbers += sorted_numbers_non2s[0:2]
 
-                elif dealt_set["priorities_diffs"][2:4] in ([0,],[0,0], [1,],[1,1]):
+                elif dealt_set["priorities_diffs"][3:4] in ([0,], [1,]):
 
                     selection_numbers += sorted_numbers_non2s[1:3]
 
