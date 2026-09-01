@@ -1728,11 +1728,11 @@ def main(args):
             max_win_array[ii] = vp.max_win
             ctr_array[ii] = vp.ctr
 
-            if args.iterations == 1:
+            if args.iterations == 1 and args.plot == True:
 
                 print("mean-rtp:", final_rtp_array[ii], "acc", vp.acc_ctr / (vp.ctr - 1), "hist", vp.stack_type_hist)
-                #plt.plot(credit_array[0:vp.ctr-1])
-                #splt.show()
+                plt.plot(credit_array[0:vp.ctr-1])
+                plt.show()
 
         if args.iterations > 1:
 
@@ -1768,6 +1768,7 @@ if __name__=="__main__":
     parser.add_argument("-i", "--iterations", type=int, default=1, help="iterations")
     parser.add_argument("-a", "--automate", action="store_true", help="automate")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
+    parser.add_argument("-p", "--plot", action="store_true", help="plot")
     parser.add_argument("-t", "--test", action="store_true", help="test")
     parser.add_argument("-th", "--threshold", type=float, default=0)
     
