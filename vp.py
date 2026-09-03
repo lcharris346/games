@@ -11,6 +11,7 @@ import os
 import sys
 import matplotlib.pyplot as plt
 import statistics
+import math
 from itertools import combinations
 #os.system('cls' if os.name == 'nt' else 'clear')
 # Constants         1    2    3    4    5    6    7    8    9   10   11   12   13          
@@ -144,6 +145,26 @@ RF_3 = combos = list(combinations([9,10,11,12,13], 3)) + list(combinations([22,2
                 list(combinations([35,36,37,38,39], 3)) + list(combinations([48,49,50,51,52], 3))
 RF_2 = combos = list(combinations([9,10,11,12,13], 2)) + list(combinations([22,23,24,25,26], 2)) + \
                 list(combinations([35,36,37,38,39], 2)) + list(combinations([48,49,50,51,52], 2))
+
+"""
+Video Poker VariantCommon PaytableReturn to Player (RTP)Single-Hand VarianceMulti-Hand Covariance (Deal Variance)Volatility Classification
+Jacks or Better9/6 (Full House / Flush)99.54%19.511.97LowBonus Poker8/5 (Full House / Flush)99.17%20.912.05Low-Medium
+Bonus Poker Deluxe9/6 (Full House / Flush)98.49%32.132.21Medium
+Double Bonus Poker10/7 (Full House / Flush)100.17%28.262.33Medium-High
+Double Double Bonus9/6 (Full House / Flush)98.98%41.962.88High
+Triple Double Bonus9/6 (Full House / Flush)98.15%98.104.92Very High
+Deuces WildFull Pay (25/15/9/5/3)100.76%25.702.54Medium
+"""
+
+BONUS_TYPES   = {
+                    "job": {"rtp": 99.54, "var": 19.51,  "cov": 1.97}, 
+                      "b": {"rtp": 99.17, "var": 20.91,  "cov": 2.08}, 
+                     "bd": {"rtp": 98.49, "var": 32.13,  "cov": 2.21},
+                     "db": {"rtp": 98.49, "var": 28.26,  "cov": 2.33}, 
+                    "ddb": {"rtp": 98.49, "var": 41.90,  "cov": 4.15}, 
+                    "tdb": {"rtp": 98.15, "var": 98.30,  "cov": 9.72}, 
+                     "dw": {"rtp": 97.06, "var": 25.80,  "cov": 2.54}
+                }
 
 # Functions
 def my_decorator(func):
@@ -646,15 +667,47 @@ def get_set_type(updated_set):
 
     return name
 
+GUARANTEE_FACTOR = 2.99
+def calc_n_rounds(target_odds, n_hands):
+    n_rounds = GUARANTEE_FACTOR * target_odds / n_hands
+    return n_rounds
+
+
+def calc_req_bankroll(max_bet, bonus_type_dict, denom, n_hands, target_odds):
+    z_score = 1.645 # 95% Confidence
+    bet = max_bet * denom * n_hands
+    rtp = bonus_type_dict["rtp"]
+    var = bonus_type_dict["var"]
+    cov = bonus_type_dict["cov"]
+    n_rounds = calc_n_rounds(target_odds, n_hands)
+    house_edge = (1 - rtp / 100.0)
+
+    exp_loss = bet * house_edge
+
+    var_per_round = n_hands * var + n_hands * (n_hands - 1) * cov
+    total_session_var = n_rounds * var_per_round
+    session_std = math.sqrt(total_session_var)
+
+    volality_buffer = z_score * max_bet * denom * session_std
+
+    req_bankroll = round(exp_loss + volality_buffer, 2)
+
+    return req_bankroll
+
+
+
+
 ######################################## CLASSES  ########################################
+
 class Vp(object):
-    def __init__(self, activity, addition_type, num_sets, credit, denom, automate, verbose, stack_type_hist = copy.deepcopy(STACK_TYPE_HIST)):
+    def __init__(self, activity, addition_type, num_sets, credit, denom, automate, verbose, odds, stack_type_hist = copy.deepcopy(STACK_TYPE_HIST)):
         self.activity = activity
         self.addition_type = addition_type
         self.credit = credit
         self.denom = denom
         self.automate = automate
         self.verbose = verbose
+        self.odds = odds
         self.valuetable = VALUETABLE[addition_type]
         self.multi = 1
         self.win = 0
@@ -1639,6 +1692,8 @@ class Vp(object):
 # Tests
 
 def test(vp):
+
+    return
     deck = copy.deepcopy(STACK)
     random.shuffle(deck)
     dealt_set = copy.deepcopy(UPDATED_SET)
@@ -1660,10 +1715,24 @@ def main(args):
         print("ERROR. Invalid activity for dw", args.activity)
         return
 
+    # Update credit if 0
+    bank_roll = calc_req_bankroll(MAX_COST[args.activity], BONUS_TYPES[args.addition_type], args.denom, args.num_sets, args.odds)
+    if args.credit == 0:
+        args.credit = bank_roll
+        print("INFO. Updated Credit based on Exp Loss and Volatility Buffer:", args.credit)
+
+    # Update threshold if 0
+    if args.threshold == 0:
+        if args.addition_type == "dw":
+            args.threshold = VALUETABLE[args.addition_type]["5ok"] * args.denom
+        else:
+            args.threshold = VALUETABLE[args.addition_type]["  q"] * args.denom
+        print("INFO. Updated Threshold to 5ok or quads", args.threshold)
+
     # tests
     if args.test == True:
 
-        vp = Vp(args.activity, args.addition_type, args.num_sets, args.credit, args.denom, args.automate, args.verbose)
+        vp = Vp(args.activity, args.addition_type, args.num_sets, args.credit, args.denom, args.automate, args.verbose, args.odds)
         test(vp)
 
     else:
@@ -1678,25 +1747,18 @@ def main(args):
         succ_cnt = 0
         max_cost = args.denom * args.num_sets * MAX_COST[args.activity]
         max_ctr = 720 # Divide by 12 to get ave min
-
-        if args.threshold == 0:
-            if args.addition_type == "dw":
-                args.threshold = VALUETABLE[args.addition_type]["5ok"] * args.denom
-            else:
-                args.threshold = VALUETABLE[args.addition_type]["  q"] * args.denom
-            print("INFO. Threshold =", args.threshold)
         
         
         for ii in range(args.iterations):
 
-            vp = Vp(args.activity, args.addition_type, args.num_sets, args.credit, args.denom, args.automate, args.verbose, stack_type_hist)
+            vp = Vp(args.activity, args.addition_type, args.num_sets, args.credit, args.denom, args.automate, args.verbose, args.odds, stack_type_hist)
             
             credit_array = [0]*max_ctr
             net_50_loss = False
             fourth_credit = False
             succ = False
             ctr = 0
-            lost_most = False
+            lost_threshold = False
             
 
             while vp.credit >= vp.cost and ctr < max_ctr :
@@ -1707,13 +1769,13 @@ def main(args):
 
                 succ = False
 
-                if lost_most == False and vp.credit < 0.5 * args.credit:
-                    lost_most = True
+                if lost_threshold == False and vp.credit < args.credit - args.threshold:
+                    lost_threshold = True
 
                 if any( (vp.win >= args.threshold, 
-                         vp.credit >= args.credit + args.threshold, 
-                         lost_most and vp.credit >= args.credit, 
-                         ctr > 0.5 * max_ctr and vp.credit >= args.credit) ):
+                         vp.credit > args.credit + args.threshold, 
+                         lost_threshold == True and vp.credit > args.credit, 
+                         )):
                     
                     succ_cnt += 1
                     succ = True
@@ -1760,17 +1822,18 @@ def main(args):
 if __name__=="__main__":
     #args
     parser = argparse.ArgumentParser(description="vp")
-    parser.add_argument("-c", "--credit", type=float, default=500, help="credit")
-    parser.add_argument("-d", "--denom", type=float, default=1, help="denom")
-    parser.add_argument("-g", "--activity", default="cl", help="activity:cl,sptrp,stp,dstp,sstk,pstk,php,ultx,fhpw,majm,drmcd")
-    parser.add_argument("-n", "--num_sets", type=int, default=1, help="num_sets:1,3,5,10")
-    parser.add_argument("-b", "--addition_type", default="tdb", help="addition_type:job,b,bd,db,ddb,tdb,dw")
+    parser.add_argument("-c", "--credit", type=float, default=0, help="credit")
+    parser.add_argument("-d", "--denom", type=float, default=0.1, help="denom")
+    parser.add_argument("-g", "--activity", default="fhpw", help="activity:cl,sptrp,stp,dstp,sstk,pstk,php,ultx,fhpw,majm,drmcd")
+    parser.add_argument("-n", "--num_sets", type=int, default=5, help="num_sets:1,3,5,10")
+    parser.add_argument("-b", "--addition_type", default="b", help="addition_type:job,b,bd,db,ddb,tdb,dw")
     parser.add_argument("-i", "--iterations", type=int, default=1, help="iterations")
     parser.add_argument("-a", "--automate", action="store_true", help="automate")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
     parser.add_argument("-p", "--plot", action="store_true", help="plot")
     parser.add_argument("-t", "--test", action="store_true", help="test")
     parser.add_argument("-th", "--threshold", type=float, default=0)
+    parser.add_argument("-o", "--odds", type=float, default=400)
     
     args = parser.parse_args()
     print(args)
